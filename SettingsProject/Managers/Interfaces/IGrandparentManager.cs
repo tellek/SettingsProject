@@ -1,4 +1,6 @@
-﻿using SettingsContracts.DatabaseModels;
+﻿using SettingsContracts;
+using SettingsContracts.ApiTransaction;
+using SettingsContracts.DatabaseModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +10,10 @@ namespace SettingsProject.Managers.Interfaces
 {
     public interface IGrandparentManager
     {
-        Task<(int, Grandparent)> GetGrandparentAsync(int accountId, long gpid);
-        Task<(int, IEnumerable<Grandparent>)> GetGrandparentsAsync(int accountId);
-        Task<(int, long)> CreateGrandparentAsync(int accountId, Grandparent payload);
-        Task<int> UpdateGrandparentAsync(int accountId, long gpid, Grandparent payload);
-        Task<int> DeleteGrandparentAsync(int accountId, long gpid);
+        Task<(int, Grandparent)> GetGrandparentAsync(ProcessData pData);
+        Task<(int, IEnumerable<Grandparent>)> GetGrandparentsAsync(ProcessData pData);
+        Task<(int, long)> CreateGrandparentAsync(ProcessData pData, SettingsOnly payload);
+        Task<int> UpdateGrandparentAsync(ProcessData pData, SettingsOnly payload);
+        Task<int> DeleteGrandparentAsync(ProcessData pData);
     }
 }

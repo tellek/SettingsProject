@@ -1,37 +1,102 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Dapper;
+using Microsoft.Extensions.Configuration;
+using Npgsql;
+using SettingsContracts;
+using SettingsContracts.ApiTransaction;
 using SettingsContracts.DatabaseModels;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SettingsResources.DatabaseRepositories
 {
-    public class ChildRepository<Child> : IRepository<Child>
+    public class ChildRepository<T> : IRepository<Child>
     {
-        public Task<int> CreateAsync(int accountId, Child item)
+        private readonly IConfiguration configuration;
+        private readonly string connectionString;
+        internal IDbConnection DbConnection => new NpgsqlConnection(connectionString);
+
+        public ChildRepository(IConfiguration configuration)
         {
-            throw new NotImplementedException();
+            this.configuration = configuration;
+            connectionString = configuration["ConnectionStrings:PostgresDb"];
         }
 
-        public Task<int> DeleteAsync(int accountId, long id)
+        public async Task<int> CreateAsync(ProcessData pData, SettingsOnly settings)
         {
-            throw new NotImplementedException();
+            StringBuilder sql = new StringBuilder();
+            sql.AppendLine("INSERT INTO dbo.child");
+            sql.AppendLine("(name,values,gpid,pid,aid) VALUES (");
+            sql.AppendLine($"'{settings.Name}',");
+            sql.AppendLine($"'{settings.Values}',");
+            sql.AppendLine($"{pData.Gpid},");
+            sql.AppendLine($"{pData.Pid},");
+            sql.AppendLine($"{pData.AccountId}");
+            sql.AppendLine(") RETURNING cid;");
+
+            using (DbConnection)
+            {
+                DbConnection.Open();
+                var result = await DbConnection.QueryAsync<int>(sql.ToString());
+                return result.FirstOrDefault();
+            }
         }
 
-        public Task<IEnumerable<Child>> GetManyAsync(int accountId, long id)
+        public async Task<int> UpdateAsync(ProcessData pData, SettingsOnly settings)
         {
-            throw new NotImplementedException();
+            StringBuilder sql = new StringBuilder();
+            sql.AppendLine("UPDATE dbo.child SET");
+
+            StringBuilder p = new StringBuilder();
+            if (!string.IsNullOrWhiteSpace(settings.Name)) p.Append($",name = '{settings.Name}'");
+            if (!string.IsNullOrWhiteSpace(settings.Values)) p.Append($",values = '{settings.Values}'");
+            sql.AppendLine(p.ToString().TrimStart(','));
+            if (p.Length <= 5) return 0;
+
+            sql.AppendLine($"WHERE aid = {pData.AccountId} AND cid = {pData.Cid} RETURNING cid;");
+
+            using (DbConnection)
+            {
+                DbConnection.Open();
+                var result = await DbConnection.QueryAsync<int>(sql.ToString());
+                return result.FirstOrDefault();
+            }
         }
 
-        public Task<Child> GetSingleAsync(int accountId, long id)
+        public async Task<int> DeleteAsync(ProcessData pData)
         {
-            throw new NotImplementedException();
+            using (DbConnection)
+            {
+                DbConnection.Open();
+                var sql = $"DELETE FROM dbo.child WHERE aid = {pData.AccountId} AND cid = {pData.Cid} RETURNING cid;";
+                var result = await DbConnection.QueryAsync<int>(sql);
+                return result.FirstOrDefault();
+            }
         }
 
-        public Task<int> UpdateAsync(int accountId, long id, Child item)
+        public async Task<Child> GetSingleAsync(ProcessData pData)
         {
-            throw new NotImplementedException();
+            using (DbConnection)
+            {
+                DbConnection.Open();
+                var sql = $"SELECT * FROM dbo.child WHERE aid = {pData.AccountId} AND cid = {pData.Cid};";
+                var result = await DbConnection.QueryAsync<Child>(sql);
+                return result.FirstOrDefault();
+            }
+        }
+
+        public async Task<IEnumerable<Child>> GetManyAsync(ProcessData pData)
+        {
+            using (DbConnection)
+            {
+                DbConnection.Open();
+                var sql = $"SELECT * FROM dbo.child WHERE aid = {pData.AccountId} AND gpid = {pData.Gpid} AND pid = {pData.Pid};";
+                var result = await DbConnection.QueryAsync<Child>(sql);
+                return result;
+            }
         }
     }
 }

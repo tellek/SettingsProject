@@ -9,7 +9,8 @@ namespace SettingsContracts.DatabaseModels
         private int aid { get; set; }
         private long gpid { get; set; }
         private long pid { get; set; }
-        private string p_name { get; set; }
+        private string name { get; set; }
+        private string values { get; set; }
 
         public int AccountId
         {
@@ -31,8 +32,14 @@ namespace SettingsContracts.DatabaseModels
 
         public string Name
         {
-            get { return p_name; }
-            set { p_name = value; }
+            get { return name; }
+            set { name = value; }
+        }
+
+        public string Values
+        {
+            get { return values; }
+            set { values = value; }
         }
     }
 }

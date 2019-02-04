@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using SettingsContracts;
+using SettingsContracts.ApiTransaction;
 using SettingsContracts.DatabaseModels;
 using System;
 using System.Collections.Generic;
@@ -25,13 +26,14 @@ namespace SettingsResources.DatabaseRepositories
             connectionString = configuration["ConnectionStrings:PostgresDb"];
         }
 
-        public async Task<int> CreateAsync(int accountId, Grandparent item)
+        public async Task<int> CreateAsync(ProcessData pData, SettingsOnly settings)
         {
             StringBuilder sql = new StringBuilder();
             sql.AppendLine("INSERT INTO dbo.grandparent");
-            sql.AppendLine("(gp_name,aid) VALUES (");
-            sql.AppendLine($"'{item.Name}',");
-            sql.AppendLine($"{accountId}");
+            sql.AppendLine("(name,values,aid) VALUES (");
+            sql.AppendLine($"'{settings.Name}',");
+            sql.AppendLine($"'{settings.Values}',");
+            sql.AppendLine($"{pData.AccountId}");
             sql.AppendLine(") RETURNING gpid;");
 
             using (DbConnection)
@@ -42,17 +44,18 @@ namespace SettingsResources.DatabaseRepositories
             }
         }
 
-        public async Task<int> UpdateAsync(int accountId, long id, Grandparent item)
+        public async Task<int> UpdateAsync(ProcessData pData, SettingsOnly settings)
         {
             StringBuilder sql = new StringBuilder();
             sql.AppendLine("UPDATE dbo.grandparent SET");
 
             StringBuilder p = new StringBuilder();
-            if (!string.IsNullOrWhiteSpace(item.Name)) p.Append($",gp_name = '{item.Name}'");
+            if (!string.IsNullOrWhiteSpace(settings.Name)) p.Append($",name = '{settings.Name}'");
+            if (!string.IsNullOrWhiteSpace(settings.Values)) p.Append($",values = '{settings.Values}'");
             sql.AppendLine(p.ToString().TrimStart(','));
             if (p.Length <= 5) return 0;
 
-            sql.AppendLine($"WHERE aid = {accountId} AND gpid = {id} RETURNING gpid;");
+            sql.AppendLine($"WHERE aid = {pData.AccountId} AND gpid = {pData.Gpid} RETURNING gpid;");
 
             using (DbConnection)
             {
@@ -62,34 +65,34 @@ namespace SettingsResources.DatabaseRepositories
             }
         }
 
-        public async Task<int> DeleteAsync(int accountId, long id)
+        public async Task<int> DeleteAsync(ProcessData pData)
         {
             using (DbConnection)
             {
                 DbConnection.Open();
-                var sql = $"DELETE FROM dbo.grandparent WHERE aid = {accountId} AND gpid = {id} RETURNING gpid;";
+                var sql = $"DELETE FROM dbo.grandparent WHERE aid = {pData.AccountId} AND gpid = {pData.Gpid} RETURNING gpid;";
                 var result = await DbConnection.QueryAsync<int>(sql);
                 return result.FirstOrDefault();
             }
         }
 
-        public async Task<Grandparent> GetSingleAsync(int accountId, long id)
+        public async Task<Grandparent> GetSingleAsync(ProcessData pData)
         {
             using (DbConnection)
             {
                 DbConnection.Open();
-                var sql = $"SELECT * FROM dbo.grandparent WHERE aid = {accountId} AND gpid = {id};";
+                var sql = $"SELECT * FROM dbo.grandparent WHERE aid = {pData.AccountId} AND gpid = {pData.Gpid};";
                 var result = await DbConnection.QueryAsync<Grandparent>(sql);
                 return result.FirstOrDefault();
             }
         }
 
-        public async Task<IEnumerable<Grandparent>> GetManyAsync(int accountId, long id = 0)
+        public async Task<IEnumerable<Grandparent>> GetManyAsync(ProcessData pData)
         {
             using (DbConnection)
             {
                 DbConnection.Open();
-                var sql = $"SELECT * FROM dbo.grandparent WHERE aid = {accountId};";
+                var sql = $"SELECT * FROM dbo.grandparent WHERE aid = {pData.AccountId};";
                 var result = await DbConnection.QueryAsync<Grandparent>(sql);
                 return result;
             }

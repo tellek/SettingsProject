@@ -1,4 +1,6 @@
-﻿using SettingsContracts.DatabaseModels;
+﻿using SettingsContracts;
+using SettingsContracts.ApiTransaction;
+using SettingsContracts.DatabaseModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,10 +10,10 @@ namespace SettingsResources.DatabaseRepositories
 {
     public interface IRepository<T> //where T : BaseEntity
     {
-        Task<int> CreateAsync(int accountId, T item);
-        Task<int> UpdateAsync(int accountId, long id, T item);
-        Task<int> DeleteAsync(int accountId, long id);
-        Task<T> GetSingleAsync(int accountId, long id);
-        Task<IEnumerable<T>> GetManyAsync(int accountId, long id);
+        Task<int> CreateAsync(ProcessData pData, SettingsOnly settings);
+        Task<int> UpdateAsync(ProcessData pData, SettingsOnly settings);
+        Task<int> DeleteAsync(ProcessData pData);
+        Task<T> GetSingleAsync(ProcessData pData);
+        Task<IEnumerable<T>> GetManyAsync(ProcessData pData);
     }
 }
