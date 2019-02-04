@@ -3,27 +3,33 @@ using SettingsContracts.DatabaseModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SettingsResources.DatabaseRepositories
 {
-    class GrandchildRepository : IRepository<Grandchild>
+    public class GrandchildRepository<Grandchild> : IRepository<Grandchild>
     {
-        public void Delete(long id)
+        public Task<int> CreateAsync(int accountId, Grandchild item)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Grandchild> GetAll(long id)
+        public Task<int> DeleteAsync(int accountId, long id)
         {
             throw new NotImplementedException();
         }
 
-        public Grandchild GetById(long id)
+        public Task<IEnumerable<Grandchild>> GetManyAsync(int accountId, long id)
         {
             throw new NotImplementedException();
         }
 
-        public void Upsert(Grandchild item)
+        public Task<Grandchild> GetSingleAsync(int accountId, long id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> UpdateAsync(int accountId, long id, Grandchild item)
         {
             throw new NotImplementedException();
         }

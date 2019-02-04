@@ -3,27 +3,33 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 namespace SettingsResources.DatabaseRepositories
 {
-    class ParentRepository : IRepository<Parent>
+    public class ParentRepository<Parent> : IRepository<Parent>
     {
-        public void Delete(long id)
+        public Task<int> CreateAsync(int accountId, Parent item)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Parent> GetAll(long id)
+        public Task<int> DeleteAsync(int accountId, long id)
         {
             throw new NotImplementedException();
         }
 
-        public Parent GetById(long id)
+        public Task<IEnumerable<Parent>> GetManyAsync(int accountId, long id)
         {
             throw new NotImplementedException();
         }
 
-        public void Upsert(Parent item)
+        public Task<Parent> GetSingleAsync(int accountId, long id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> UpdateAsync(int accountId, long id, Parent item)
         {
             throw new NotImplementedException();
         }

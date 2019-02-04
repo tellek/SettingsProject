@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Npgsql;
 using SettingsContracts;
 using SettingsContracts.DatabaseModels;
 using System;
@@ -8,35 +9,90 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SettingsResources.DatabaseRepositories
 {
-    class GrandparentRepository : IRepository<Grandparent>
+    public class GrandparentRepository<T> : IRepository<Grandparent> //where T : class
     {
-        public void Delete(long id)
+        private readonly IConfiguration configuration;
+        private readonly string connectionString;
+        internal IDbConnection DbConnection => new NpgsqlConnection(connectionString);
+
+        public GrandparentRepository(IConfiguration configuration)
         {
-            throw new NotImplementedException();
+            this.configuration = configuration;
+            connectionString = configuration["ConnectionStrings:PostgresDb"];
         }
 
-        public IEnumerable<Grandparent> GetAll(long id)
+        public async Task<int> CreateAsync(int accountId, Grandparent item)
         {
-            throw new NotImplementedException();
-        }
+            StringBuilder sql = new StringBuilder();
+            sql.AppendLine("INSERT INTO dbo.grandparent");
+            sql.AppendLine("(gp_name,aid) VALUES (");
+            sql.AppendLine($"'{item.Name}',");
+            sql.AppendLine($"{accountId}");
+            sql.AppendLine(") RETURNING gpid;");
 
-        public Grandparent GetById(long id)
-        {
-            using (IDbConnection dbConnection = new SqlConnection(StaticProps.DbConnectionString))
+            using (DbConnection)
             {
-                dbConnection.Open();
-                var sql = $"SELECT * FROM dbo.grandparent WHERE gpid = {id}";
-                var result = dbConnection.Query<Grandparent>(sql).FirstOrDefault();
-                return result;
+                DbConnection.Open();
+                var result = await DbConnection.QueryAsync<int>(sql.ToString());
+                return result.FirstOrDefault();
             }
         }
 
-        public void Upsert(Grandparent item)
+        public async Task<int> UpdateAsync(int accountId, long id, Grandparent item)
         {
-            throw new NotImplementedException();
+            StringBuilder sql = new StringBuilder();
+            sql.AppendLine("UPDATE dbo.grandparent SET");
+
+            StringBuilder p = new StringBuilder();
+            if (!string.IsNullOrWhiteSpace(item.Name)) p.Append($",gp_name = '{item.Name}'");
+            sql.AppendLine(p.ToString().TrimStart(','));
+            if (p.Length <= 5) return 0;
+
+            sql.AppendLine($"WHERE aid = {accountId} AND gpid = {id} RETURNING gpid;");
+
+            using (DbConnection)
+            {
+                DbConnection.Open();
+                var result = await DbConnection.QueryAsync<int>(sql.ToString());
+                return result.FirstOrDefault();
+            }
+        }
+
+        public async Task<int> DeleteAsync(int accountId, long id)
+        {
+            using (DbConnection)
+            {
+                DbConnection.Open();
+                var sql = $"DELETE FROM dbo.grandparent WHERE aid = {accountId} AND gpid = {id} RETURNING gpid;";
+                var result = await DbConnection.QueryAsync<int>(sql);
+                return result.FirstOrDefault();
+            }
+        }
+
+        public async Task<Grandparent> GetSingleAsync(int accountId, long id)
+        {
+            using (DbConnection)
+            {
+                DbConnection.Open();
+                var sql = $"SELECT * FROM dbo.grandparent WHERE aid = {accountId} AND gpid = {id};";
+                var result = await DbConnection.QueryAsync<Grandparent>(sql);
+                return result.FirstOrDefault();
+            }
+        }
+
+        public async Task<IEnumerable<Grandparent>> GetManyAsync(int accountId, long id = 0)
+        {
+            using (DbConnection)
+            {
+                DbConnection.Open();
+                var sql = $"SELECT * FROM dbo.grandparent WHERE aid = {accountId};";
+                var result = await DbConnection.QueryAsync<Grandparent>(sql);
+                return result;
+            }
         }
     }
 }

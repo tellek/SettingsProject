@@ -4,20 +4,29 @@ using System.Text;
 
 namespace SettingsContracts.DatabaseModels
 {
-    public class Grandparent : BaseEntity
+    public class Grandparent
     {
-        private Int64 gpid { get; set; }
+        private int aid { get; set; }
+        private long gpid { get; set; }
         private string gp_name { get; set; }
 
-        public Int64 Id
+        public int AccountId
+        {
+            get { return aid; }
+            set { aid = value; }
+        }
+
+        public long Id
         {
             get { return gpid; }
             set { gpid = value; }
         }
+
         public string Name
         {
             get { return gp_name; }
             set { gp_name = value; }
         }
+
     }
 }
