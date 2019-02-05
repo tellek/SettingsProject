@@ -22,15 +22,15 @@ namespace SettingsProject.Controllers
         private readonly IGrandparentManager gpManager;
         private readonly IParentManager pManager;
         private readonly IChildManager cManager;
-        private readonly IGrandchildManager cpManager;
+        private readonly IGrandchildManager gcManager;
 
         public SettingsController(IGrandparentManager gpManager, IParentManager pManager,
-            IChildManager cManager, IGrandchildManager cpManager)
+            IChildManager cManager, IGrandchildManager gcManager)
         {
             this.gpManager = gpManager;
             this.pManager = pManager;
             this.cManager = cManager;
-            this.cpManager = cpManager;
+            this.gcManager = gcManager;
         }
 
         #region GET
@@ -48,33 +48,33 @@ namespace SettingsProject.Controllers
         [HttpGet]
         [Route("{gpid}/id/{pid}")]
         [ValidateModelState]
-        public virtual ActionResult<Parent> GetParent([FromRoute][Required]int accountId, [FromRoute][Required]long gpid, 
+        public async virtual Task<ActionResult<Parent>> GetParent([FromRoute][Required]int accountId, [FromRoute][Required]long gpid, 
             [FromRoute][Required]long pid)
         {
             var pData = InitiateProcessData(accountId, gpid, pid, 0, 0);
-            // TODO Impliment this
-            return Ok();
+            var result = await pManager.GetParentAsync(pData);
+            return StatusCode(result.Item1, result.Item2);
         }
         [HttpGet]
         [Route("{gpid}/{pid}/id/{cid}")]
         [ValidateModelState]
-        public virtual ActionResult<Child> GetChild([FromRoute][Required]int accountId, [FromRoute][Required]long gpid, 
+        public async virtual Task<ActionResult<Child>> GetChild([FromRoute][Required]int accountId, [FromRoute][Required]long gpid, 
             [FromRoute][Required]long pid, [FromRoute][Required]long cid)
         {
             var pData = InitiateProcessData(accountId, gpid, pid, cid, 0);
-            // TODO Impliment this
-            return Ok();
+            var result = await cManager.GetChildAsync(pData);
+            return StatusCode(result.Item1, result.Item2);
         }
 
         [HttpGet]
         [Route("{gpid}/{pid}/{cid}/id/{gcid}")]
         [ValidateModelState]
-        public virtual ActionResult<Grandchild> GetGrandchild([FromRoute][Required]int accountId, [FromRoute][Required]long gpid, 
+        public async virtual Task<ActionResult<Grandchild>> GetGrandchild([FromRoute][Required]int accountId, [FromRoute][Required]long gpid, 
             [FromRoute][Required]long pid, [FromRoute][Required]long cid, [FromRoute][Required]long gcid)
         {
             var pData = InitiateProcessData(accountId, gpid, pid, cid, gcid);
-            // TODO Impliment this
-            return Ok();
+            var result = await gcManager.GetGrandchildAsync(pData);
+            return StatusCode(result.Item1, result.Item2);
         }
         #endregion
 
@@ -93,35 +93,35 @@ namespace SettingsProject.Controllers
         [HttpGet]
         [Route("{gpid}")]
         [ValidateModelState]
-        public virtual IActionResult GetParents([FromRoute][Required]int accountId, [FromRoute][Required]long gpid, 
-            [FromRoute][Required]long pid)
+        public async virtual Task<ActionResult<List<Parent>>> GetParents([FromRoute][Required]int accountId, 
+            [FromRoute][Required]long gpid, [FromRoute][Required]long pid)
         {
             var pData = InitiateProcessData(accountId, gpid, pid, 0, 0);
-            // TODO Impliment this
-            return Ok();
+            var result = await pManager.GetParentsAsync(pData);
+            return StatusCode(result.Item1, result.Item2);
         }
 
         [HttpGet]
         [Route("{gpid}/{pid}")]
         [ValidateModelState]
-        public virtual IActionResult GetChildren([FromRoute][Required]int accountId, [FromRoute][Required]long gpid,
-            [FromRoute][Required]long pid, [FromRoute][Required]long cid)
+        public async virtual Task<ActionResult<List<Child>>> GetChildren([FromRoute][Required]int accountId, 
+            [FromRoute][Required]long gpid, [FromRoute][Required]long pid, [FromRoute][Required]long cid)
         {
             var pData = InitiateProcessData(accountId, gpid, pid, cid, 0);
-            // TODO Impliment this
-            return Ok();
+            var result = await cManager.GetChildsAsync(pData);
+            return StatusCode(result.Item1, result.Item2);
         }
 
         [HttpGet]
         [Route("{gpid}/{pid}/{cid}")]
         [ValidateModelState]
-        public virtual IActionResult GetGrandchildren([FromRoute][Required]int accountId, [FromRoute][Required]long gpid,
-            [FromRoute][Required]long pid, [FromRoute][Required]long cid,
+        public async virtual Task<ActionResult<List<Grandchild>>> GetGrandchildren([FromRoute][Required]int accountId, 
+            [FromRoute][Required]long gpid, [FromRoute][Required]long pid, [FromRoute][Required]long cid,
             [FromRoute][Required]long gcid)
         {
             var pData = InitiateProcessData(accountId, gpid, pid, cid, gcid);
-            // TODO Impliment this
-            return Ok();
+            var result = await gcManager.GetGrandchildsAsync(pData);
+            return StatusCode(result.Item1, result.Item2);
         }
         #endregion
 
@@ -141,35 +141,35 @@ namespace SettingsProject.Controllers
         [HttpPatch]
         [Route("{gpid}/id/{pid}")]
         [ValidateModelState]
-        public virtual IActionResult PatchParent([FromRoute][Required]int accountId, [FromRoute][Required]long gpid,
-            [FromRoute][Required]long pid, [FromBody][Required]Parent body)
+        public async virtual Task<ActionResult> PatchParent([FromRoute][Required]int accountId, [FromRoute][Required]long gpid,
+            [FromRoute][Required]long pid, [FromBody][Required]SettingsOnly body)
         {
             var pData = InitiateProcessData(accountId, gpid, pid, 0, 0);
-            // TODO Impliment this
-            return Ok();
+            var result = await pManager.UpdateParentAsync(pData, body);
+            return StatusCode(result);
         }
 
         [HttpPatch]
         [Route("{gpid}/{pid}/id/{cid}")]
         [ValidateModelState]
-        public virtual IActionResult PatchChild([FromRoute][Required]int accountId, [FromRoute][Required]long gpid,
-            [FromRoute][Required]long pid, [FromRoute][Required]long cid, [FromBody][Required]Child body)
+        public async virtual Task<ActionResult> PatchChild([FromRoute][Required]int accountId, [FromRoute][Required]long gpid,
+            [FromRoute][Required]long pid, [FromRoute][Required]long cid, [FromBody][Required]SettingsOnly body)
         {
             var pData = InitiateProcessData(accountId, gpid, pid, cid, 0);
-            // TODO Impliment this
-            return Ok();
+            var result = await cManager.UpdateChildAsync(pData, body);
+            return StatusCode(result);
         }
 
         [HttpPatch]
         [Route("{gpid}/{pid}/{cid}/id/{gcid}")]
         [ValidateModelState]
-        public virtual IActionResult PatchGrandchild([FromRoute][Required]int accountId, [FromRoute][Required]long gpid,
+        public async virtual Task<ActionResult> PatchGrandchild([FromRoute][Required]int accountId, [FromRoute][Required]long gpid,
             [FromRoute][Required]long pid, [FromRoute][Required]long cid, [FromRoute][Required]long gcid, 
-            [FromBody][Required]Grandchild body)
+            [FromBody][Required]SettingsOnly body)
         {
             var pData = InitiateProcessData(accountId, gpid, pid, cid, gcid);
-            // TODO Impliment this
-            return Ok();
+            var result = await gcManager.UpdateGrandchildAsync(pData, body);
+            return StatusCode(result);
         }
         #endregion
 
@@ -189,34 +189,34 @@ namespace SettingsProject.Controllers
         [HttpPost]
         [Route("{gpid}")]
         [ValidateModelState]
-        public virtual IActionResult PostParent([FromRoute][Required]int accountId, [FromRoute][Required]long gpid, 
-            [FromBody][Required]Parent body)
+        public async virtual Task<ActionResult> PostParent([FromRoute][Required]int accountId, [FromRoute][Required]long gpid, 
+            [FromBody][Required]SettingsOnly body)
         {
             var pData = InitiateProcessData(accountId, gpid, 0, 0, 0);
-            // TODO Impliment this
-            return Ok();
+            var result = await pManager.CreateParentAsync(pData, body);
+            return StatusCode(result.Item1, $"Created: {result.Item2}");
         }
 
         [HttpPost]
         [Route("{gpid}/{pid}")]
         [ValidateModelState]
-        public virtual IActionResult PostChild([FromRoute][Required]int accountId, [FromRoute][Required]long gpid,
-            [FromRoute][Required]long pid, [FromBody][Required]Child body)
+        public async virtual Task<ActionResult> PostChild([FromRoute][Required]int accountId, [FromRoute][Required]long gpid,
+            [FromRoute][Required]long pid, [FromBody][Required]SettingsOnly body)
         {
             var pData = InitiateProcessData(accountId, gpid, pid, 0, 0);
-            // TODO Impliment this
-            return Ok();
+            var result = await cManager.CreateChildAsync(pData, body);
+            return StatusCode(result.Item1, $"Created: {result.Item2}");
         }
 
         [HttpPost]
         [Route("{gpid}/{pid}/{cid}")]
         [ValidateModelState]
-        public virtual IActionResult PostGrandchild([FromRoute][Required]int accountId, [FromRoute][Required]long gpid,
-            [FromRoute][Required]long pid, [FromRoute][Required]long cid, [FromBody][Required]Grandchild body)
+        public async virtual Task<ActionResult> PostGrandchild([FromRoute][Required]int accountId, [FromRoute][Required]long gpid,
+            [FromRoute][Required]long pid, [FromRoute][Required]long cid, [FromBody][Required]SettingsOnly body)
         {
             var pData = InitiateProcessData(accountId, gpid, pid, cid, 0);
-            // TODO Impliment this
-            return Ok();
+            var result = await gcManager.CreateGrandchildAsync(pData, body);
+            return StatusCode(result.Item1, $"Created: {result.Item2}");
         }
         #endregion
 
@@ -235,34 +235,34 @@ namespace SettingsProject.Controllers
         [HttpDelete]
         [Route("{gpid}/id/{pid}")]
         [ValidateModelState]
-        public virtual ActionResult<Parent> DeleteParent([FromRoute][Required]int accountId, [FromRoute][Required]long gpid,
+        public async virtual Task<ActionResult> DeleteParent([FromRoute][Required]int accountId, [FromRoute][Required]long gpid,
             [FromRoute][Required]long pid)
         {
             var pData = InitiateProcessData(accountId, gpid, pid, 0, 0);
-            // TODO Impliment this
-            return Ok();
+            var result = await pManager.DeleteParentAsync(pData);
+            return StatusCode(result);
         }
         [HttpDelete]
         [Route("{gpid}/{pid}/id/{cid}")]
         [ValidateModelState]
-        public virtual ActionResult<Child> DeleteChild([FromRoute][Required]int accountId, [FromRoute][Required]long gpid,
+        public async virtual Task<ActionResult> DeleteChild([FromRoute][Required]int accountId, [FromRoute][Required]long gpid,
             [FromRoute][Required]long pid, [FromRoute][Required]long cid)
         {
             var pData = InitiateProcessData(accountId, gpid, pid, cid, 0);
-            // TODO Impliment this
-            return Ok();
+            var result = await cManager.DeleteChildAsync(pData);
+            return StatusCode(result);
         }
 
         [HttpDelete]
         [Route("{gpid}/{pid}/{cid}/id/{gcid}")]
         [ValidateModelState]
-        public virtual ActionResult<Grandchild> DeleteGrandchild([FromRoute][Required]int accountId, [FromRoute][Required]long gpid,
+        public async virtual Task<ActionResult> DeleteGrandchild([FromRoute][Required]int accountId, [FromRoute][Required]long gpid,
             [FromRoute][Required]long pid, [FromRoute][Required]long cid,
             [FromRoute][Required]long gcid)
         {
             var pData = InitiateProcessData(accountId, gpid, pid, cid, gcid);
-            // TODO Impliment this
-            return Ok();
+            var result = await gcManager.DeleteGrandchildAsync(pData);
+            return StatusCode(result);
         }
         #endregion
 

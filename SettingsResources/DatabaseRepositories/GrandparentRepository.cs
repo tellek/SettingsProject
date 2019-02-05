@@ -1,9 +1,11 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Npgsql;
 using SettingsContracts;
 using SettingsContracts.ApiTransaction;
 using SettingsContracts.DatabaseModels;
+using SettingsUtilities;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -30,10 +32,14 @@ namespace SettingsResources.DatabaseRepositories
         {
             StringBuilder sql = new StringBuilder();
             sql.AppendLine("INSERT INTO dbo.grandparent");
+            // Remember to make the order of the properties match the values.
             sql.AppendLine("(name,values,aid) VALUES (");
+
             sql.AppendLine($"'{settings.Name}',");
-            sql.AppendLine($"'{settings.Values}',");
+            sql.AppendLine($"{MutateString.ConvertToJsonbString(settings.Values)},");
             sql.AppendLine($"{pData.AccountId}");
+
+            // Return the created ID for reference.
             sql.AppendLine(") RETURNING gpid;");
 
             using (DbConnection)
@@ -50,18 +56,21 @@ namespace SettingsResources.DatabaseRepositories
             sql.AppendLine("UPDATE dbo.grandparent SET");
 
             StringBuilder p = new StringBuilder();
+            // Set properties to be updated only if they contain a value.
             if (!string.IsNullOrWhiteSpace(settings.Name)) p.Append($",name = '{settings.Name}'");
-            if (!string.IsNullOrWhiteSpace(settings.Values)) p.Append($",values = '{settings.Values}'");
+            if (settings.Values != null) p.Append($",values = '{MutateString.ConvertToJsonbString(settings.Values)}'");
+
             sql.AppendLine(p.ToString().TrimStart(','));
+            // Skip the whole thing if no values were updated. 
             if (p.Length <= 5) return 0;
 
-            sql.AppendLine($"WHERE aid = {pData.AccountId} AND gpid = {pData.Gpid} RETURNING gpid;");
+            sql.AppendLine($"WHERE aid = {pData.AccountId} AND gpid = {pData.Gpid};");
 
             using (DbConnection)
             {
                 DbConnection.Open();
-                var result = await DbConnection.QueryAsync<int>(sql.ToString());
-                return result.FirstOrDefault();
+                var result = await DbConnection.ExecuteAsync(sql.ToString());
+                return result;
             }
         }
 
@@ -70,9 +79,9 @@ namespace SettingsResources.DatabaseRepositories
             using (DbConnection)
             {
                 DbConnection.Open();
-                var sql = $"DELETE FROM dbo.grandparent WHERE aid = {pData.AccountId} AND gpid = {pData.Gpid} RETURNING gpid;";
-                var result = await DbConnection.QueryAsync<int>(sql);
-                return result.FirstOrDefault();
+                var sql = $"DELETE FROM dbo.grandparent WHERE aid = {pData.AccountId} AND gpid = {pData.Gpid};";
+                var result = await DbConnection.ExecuteAsync(sql);
+                return result;
             }
         }
 
@@ -93,9 +102,12 @@ namespace SettingsResources.DatabaseRepositories
             {
                 DbConnection.Open();
                 var sql = $"SELECT * FROM dbo.grandparent WHERE aid = {pData.AccountId};";
+
                 var result = await DbConnection.QueryAsync<Grandparent>(sql);
                 return result;
             }
         }
+
+        
     }
 }

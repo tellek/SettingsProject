@@ -10,6 +10,7 @@ using System.Data;
 using Npgsql;
 using Dapper;
 using System.Linq;
+using SettingsUtilities;
 
 namespace SettingsResources.DatabaseRepositories
 {
@@ -29,11 +30,15 @@ namespace SettingsResources.DatabaseRepositories
         {
             StringBuilder sql = new StringBuilder();
             sql.AppendLine("INSERT INTO dbo.parent");
+            // Remember to make the order of the properties match the values.
             sql.AppendLine("(name,values,gpid,aid) VALUES (");
+
             sql.AppendLine($"'{settings.Name}',");
-            sql.AppendLine($"'{settings.Values}',");
+            sql.AppendLine($"'{MutateString.ConvertToJsonbString(settings.Values)}',");
             sql.AppendLine($"{pData.Gpid},");
             sql.AppendLine($"{pData.AccountId}");
+
+            // Return the created ID for reference.
             sql.AppendLine(") RETURNING pid;");
 
             using (DbConnection)
@@ -50,9 +55,12 @@ namespace SettingsResources.DatabaseRepositories
             sql.AppendLine("UPDATE dbo.parent SET");
 
             StringBuilder p = new StringBuilder();
+            // Set properties to be updated only if they contain a value.
             if (!string.IsNullOrWhiteSpace(settings.Name)) p.Append($",name = '{settings.Name}'");
-            if (!string.IsNullOrWhiteSpace(settings.Values)) p.Append($",values = '{settings.Values}'");
+            if (settings.Values != null) p.Append($",values = '{MutateString.ConvertToJsonbString(settings.Values)}'");
+
             sql.AppendLine(p.ToString().TrimStart(','));
+            // Skip the whole thing if no values were updated. 
             if (p.Length <= 5) return 0;
 
             sql.AppendLine($"WHERE aid = {pData.AccountId} AND pid = {pData.Pid} RETURNING pid;");
@@ -70,9 +78,9 @@ namespace SettingsResources.DatabaseRepositories
             using (DbConnection)
             {
                 DbConnection.Open();
-                var sql = $"DELETE FROM dbo.parent WHERE aid = {pData.AccountId} AND pid = {pData.Pid} RETURNING pid;";
-                var result = await DbConnection.QueryAsync<int>(sql);
-                return result.FirstOrDefault();
+                var sql = $"DELETE FROM dbo.parent WHERE aid = {pData.AccountId} AND pid = {pData.Pid};";
+                var result = await DbConnection.ExecuteAsync(sql);
+                return result;
             }
         }
 

@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettingsProject", "SettingsProject\SettingsProject.csproj", "{76C1087E-FB3A-4862-A356-34FBFE1DEAA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SettingsProject", "SettingsProject\SettingsProject.csproj", "{76C1087E-FB3A-4862-A356-34FBFE1DEAA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettingsResources", "SettingsResources\SettingsResources.csproj", "{ED9593AD-546C-43E3-AC10-3818AE4D372A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SettingsResources", "SettingsResources\SettingsResources.csproj", "{ED9593AD-546C-43E3-AC10-3818AE4D372A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettingsTests", "SettingsTests\SettingsTests.csproj", "{5353BDAC-FB81-4405-81D9-757CE7B48AA3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SettingsTests", "SettingsTests\SettingsTests.csproj", "{5353BDAC-FB81-4405-81D9-757CE7B48AA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettingsContracts", "SettingsContracts\SettingsContracts.csproj", "{8A9974AA-A598-42B8-A1EE-92C61FE9559D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SettingsContracts", "SettingsContracts\SettingsContracts.csproj", "{8A9974AA-A598-42B8-A1EE-92C61FE9559D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettingsUtilities", "SettingsUtilities\SettingsUtilities.csproj", "{DC20805A-D633-464D-9B48-BFC97C9AD34F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{8A9974AA-A598-42B8-A1EE-92C61FE9559D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A9974AA-A598-42B8-A1EE-92C61FE9559D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A9974AA-A598-42B8-A1EE-92C61FE9559D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC20805A-D633-464D-9B48-BFC97C9AD34F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC20805A-D633-464D-9B48-BFC97C9AD34F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC20805A-D633-464D-9B48-BFC97C9AD34F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC20805A-D633-464D-9B48-BFC97C9AD34F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

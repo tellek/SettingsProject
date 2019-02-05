@@ -4,6 +4,7 @@ using Npgsql;
 using SettingsContracts;
 using SettingsContracts.ApiTransaction;
 using SettingsContracts.DatabaseModels;
+using SettingsUtilities;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -29,12 +30,16 @@ namespace SettingsResources.DatabaseRepositories
         {
             StringBuilder sql = new StringBuilder();
             sql.AppendLine("INSERT INTO dbo.child");
+            // Remember to make the order of the properties match the values.
             sql.AppendLine("(name,values,gpid,pid,aid) VALUES (");
+
             sql.AppendLine($"'{settings.Name}',");
-            sql.AppendLine($"'{settings.Values}',");
+            sql.AppendLine($"'{MutateString.ConvertToJsonbString(settings.Values)}',");
             sql.AppendLine($"{pData.Gpid},");
             sql.AppendLine($"{pData.Pid},");
             sql.AppendLine($"{pData.AccountId}");
+
+            // Return the created ID for reference.
             sql.AppendLine(") RETURNING cid;");
 
             using (DbConnection)
@@ -51,9 +56,12 @@ namespace SettingsResources.DatabaseRepositories
             sql.AppendLine("UPDATE dbo.child SET");
 
             StringBuilder p = new StringBuilder();
+            // Set properties to be updated only if they contain a value.
             if (!string.IsNullOrWhiteSpace(settings.Name)) p.Append($",name = '{settings.Name}'");
-            if (!string.IsNullOrWhiteSpace(settings.Values)) p.Append($",values = '{settings.Values}'");
+            if (settings.Values != null) p.Append($",values = '{MutateString.ConvertToJsonbString(settings.Values)}'");
+
             sql.AppendLine(p.ToString().TrimStart(','));
+            // Skip the whole thing if no values were updated. 
             if (p.Length <= 5) return 0;
 
             sql.AppendLine($"WHERE aid = {pData.AccountId} AND cid = {pData.Cid} RETURNING cid;");
@@ -71,9 +79,9 @@ namespace SettingsResources.DatabaseRepositories
             using (DbConnection)
             {
                 DbConnection.Open();
-                var sql = $"DELETE FROM dbo.child WHERE aid = {pData.AccountId} AND cid = {pData.Cid} RETURNING cid;";
-                var result = await DbConnection.QueryAsync<int>(sql);
-                return result.FirstOrDefault();
+                var sql = $"DELETE FROM dbo.child WHERE aid = {pData.AccountId} AND cid = {pData.Cid};";
+                var result = await DbConnection.ExecuteAsync(sql);
+                return result;
             }
         }
 

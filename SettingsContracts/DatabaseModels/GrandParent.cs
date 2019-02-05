@@ -9,7 +9,7 @@ namespace SettingsContracts.DatabaseModels
         private int aid { get; set; }
         private long gpid { get; set; }
         private string name { get; set; }
-        private string values { get; set; }
+        private string[] values { get; set; }
 
         public int AccountId
         {
@@ -29,7 +29,7 @@ namespace SettingsContracts.DatabaseModels
             set { name = value; }
         }
 
-        public string Values
+        public string[] Values
         {
             get { return values; }
             set { values = value; }

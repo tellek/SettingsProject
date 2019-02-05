@@ -11,7 +11,7 @@ namespace SettingsContracts.DatabaseModels
         private long pid { get; set; }
         private long cid { get; set; }
         private string name { get; set; }
-        private string values { get; set; }
+        private string[] values { get; set; }
 
         public int AccountId
         {
@@ -43,7 +43,7 @@ namespace SettingsContracts.DatabaseModels
             set { name = value; }
         }
 
-        public string Values
+        public string[] Values
         {
             get { return values; }
             set { values = value; }

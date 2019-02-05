@@ -49,9 +49,9 @@ namespace SettingsProject
 
             // Dependency Injection
             services.AddSingleton(typeof(IRepository<Grandparent>), typeof(GrandparentRepository<Grandparent>));
-            services.AddSingleton(typeof(IRepository<Parent>), typeof(GrandparentRepository<Parent>));
-            services.AddSingleton(typeof(IRepository<Child>), typeof(GrandparentRepository<Child>));
-            services.AddSingleton(typeof(IRepository<Grandchild>), typeof(GrandparentRepository<Grandchild>));
+            services.AddSingleton(typeof(IRepository<Parent>), typeof(ParentRepository<Parent>));
+            services.AddSingleton(typeof(IRepository<Child>), typeof(ChildRepository<Child>));
+            services.AddSingleton(typeof(IRepository<Grandchild>), typeof(GrandchildRepository<Grandchild>));
             services.AddSingleton<IGrandparentManager, GrandparentManager>();
             services.AddSingleton<IParentManager, ParentManager>();
             services.AddSingleton<IChildManager, ChildManager>();
