@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace SettingsContracts.DatabaseModels
@@ -10,43 +11,48 @@ namespace SettingsContracts.DatabaseModels
         private long gpid { get; set; }
         private long pid { get; set; }
         private long cid { get; set; }
-        private string name { get; set; }
-        private string[] values { get; set; }
+        private string c_name { get; set; }
+        private string[] c_values { get; set; }
 
+        [Required]
         public int AccountId
         {
             get { return aid; }
             set { aid = value; }
         }
 
+        [Required]
         public long Gpid
         {
             get { return gpid; }
             set { gpid = value; }
         }
 
+        [Required]
         public long Pid
         {
             get { return pid; }
             set { pid = value; }
         }
 
+        [Required]
         public long Id
         {
             get { return cid; }
             set { cid = value; }
         }
 
+        [Required]
         public string Name
         {
-            get { return name; }
-            set { name = value; }
+            get { return c_name; }
+            set { c_name = value; }
         }
 
         public string[] Values
         {
-            get { return values; }
-            set { values = value; }
+            get { return c_values; }
+            set { c_values = value; }
         }
     }
 }

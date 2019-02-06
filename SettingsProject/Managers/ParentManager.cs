@@ -2,7 +2,6 @@
 using SettingsContracts;
 using SettingsContracts.ApiTransaction;
 using SettingsContracts.DatabaseModels;
-using SettingsProject.Managers.Interfaces;
 using SettingsResources.DatabaseRepositories;
 using System;
 using System.Collections.Generic;
@@ -11,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SettingsProject.Managers
 {
-    public class ParentManager : IParentManager
+    public class ParentManager<T> : IManager<Parent>
     {
         private readonly IMemoryCache _cache;
         private readonly IRepository<Parent> _repo;
@@ -24,7 +23,7 @@ namespace SettingsProject.Managers
             _cacheTime = 10; //TODO: Get this from config.
         }
 
-        public async Task<(int, long)> CreateParentAsync(ProcessData pData, SettingsOnly payload)
+        public async Task<(int, long)> CreateSettingAsync(ProcessData pData, SettingsOnly payload)
         {
             long createdRecordId = await _repo.CreateAsync(pData, payload);
 
@@ -37,7 +36,7 @@ namespace SettingsProject.Managers
             return (201, createdRecordId);
         }
 
-        public async Task<int> DeleteParentAsync(ProcessData pData)
+        public async Task<int> DeleteSettingAsync(ProcessData pData)
         {
             int deletedAmount = await _repo.DeleteAsync(pData);
 
@@ -51,7 +50,7 @@ namespace SettingsProject.Managers
             return 200;
         }
 
-        public async Task<(int, Parent)> GetParentAsync(ProcessData pData)
+        public async Task<(int, Parent)> GetSettingAsync(ProcessData pData)
         {
             Parent cachedValue;
             string accountkey = $"ParentList_{pData.AccountId}";
@@ -79,7 +78,7 @@ namespace SettingsProject.Managers
             return (200, cachedValue);
         }
 
-        public async Task<(int, IEnumerable<Parent>)> GetParentsAsync(ProcessData pData)
+        public async Task<(int, IEnumerable<Parent>)> GetSettingsAsync(ProcessData pData)
         {
             string key = $"ParentList_{pData.AccountId}";
 
@@ -94,7 +93,7 @@ namespace SettingsProject.Managers
             return (200, cachedValue);
         }
 
-        public async Task<int> UpdateParentAsync(ProcessData pData, SettingsOnly payload)
+        public async Task<int> UpdateSettingAsync(ProcessData pData, SettingsOnly payload)
         {
             long updatedRecordId = await _repo.UpdateAsync(pData, payload);
             if (updatedRecordId <= 0) return 404;

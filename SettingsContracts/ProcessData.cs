@@ -12,5 +12,11 @@ namespace SettingsContracts
         public long Pid { get; set; }
         public long Cid { get; set; }
         public long Gcid { get; set; }
+
+        public string AccountName { get; set; }
+        public string Gpname { get; set; }
+        public string Pname { get; set; }
+        public string Cname { get; set; }
+        public string Gcname { get; set; }
     }
 }

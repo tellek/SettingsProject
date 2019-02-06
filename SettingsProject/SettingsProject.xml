@@ -1,0 +1,209 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SettingsProject</name>
+    </assembly>
+    <members>
+        <member name="T:SettingsProject.Attributes.ValidateModelStateAttribute">
+            <summary>
+            Model state validation attribute
+            </summary>
+        </member>
+        <member name="M:SettingsProject.Attributes.ValidateModelStateAttribute.OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext)">
+            <summary>
+            Called before the action method is invoked
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.GetGrandparent(System.Int32,System.Int64)">
+            <summary>
+            Get a Level 1 Setting.
+            </summary>
+            <param name="accountId"></param>
+            <param name="gpid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.GetParent(System.Int32,System.Int64,System.Int64)">
+            <summary>
+            Get a Level 2 Setting.
+            </summary>
+            <param name="accountId"></param>
+            <param name="gpid"></param>
+            <param name="pid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.GetChild(System.Int32,System.Int64,System.Int64,System.Int64)">
+            <summary>
+            Get a Level 3 Setting.
+            </summary>
+            <param name="accountId"></param>
+            <param name="gpid"></param>
+            <param name="pid"></param>
+            <param name="cid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.GetGrandchild(System.Int32,System.Int64,System.Int64,System.Int64,System.Int64)">
+            <summary>
+            Get a Level 4 Setting.
+            </summary>
+            <param name="accountId"></param>
+            <param name="gpid"></param>
+            <param name="pid"></param>
+            <param name="cid"></param>
+            <param name="gcid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.GetGrandparents(System.Int32)">
+            <summary>
+            Get a list of Level 1 Settings.
+            </summary>
+            <param name="accountId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.GetParents(System.Int32,System.Int64)">
+            <summary>
+            Get a list of Level 2 Settings.
+            </summary>
+            <param name="accountId"></param>
+            <param name="gpid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.GetChildren(System.Int32,System.Int64,System.Int64)">
+            <summary>
+            Get a list of Level 3 Settings.
+            </summary>
+            <param name="accountId"></param>
+            <param name="gpid"></param>
+            <param name="pid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.GetGrandchildren(System.Int32,System.Int64,System.Int64,System.Int64)">
+            <summary>
+            Get a list of Level 4 Settings.
+            </summary>
+            <param name="accountId"></param>
+            <param name="gpid"></param>
+            <param name="pid"></param>
+            <param name="cid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.PatchGrandparent(System.Int32,System.Int64,SettingsContracts.ApiTransaction.SettingsOnly)">
+            <summary>
+            Update a Level 1 Setting.
+            </summary>
+            <param name="accountId"></param>
+            <param name="gpid"></param>
+            <param name="body"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.PatchParent(System.Int32,System.Int64,System.Int64,SettingsContracts.ApiTransaction.SettingsOnly)">
+            <summary>
+            Update a Level 2 Setting.
+            </summary>
+            <param name="accountId"></param>
+            <param name="gpid"></param>
+            <param name="pid"></param>
+            <param name="body"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.PatchChild(System.Int32,System.Int64,System.Int64,System.Int64,SettingsContracts.ApiTransaction.SettingsOnly)">
+            <summary>
+            Update a Level 3 Setting.
+            </summary>
+            <param name="accountId"></param>
+            <param name="gpid"></param>
+            <param name="pid"></param>
+            <param name="cid"></param>
+            <param name="body"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.PatchGrandchild(System.Int32,System.Int64,System.Int64,System.Int64,System.Int64,SettingsContracts.ApiTransaction.SettingsOnly)">
+            <summary>
+            Update a Level 4 Setting.
+            </summary>
+            <param name="accountId"></param>
+            <param name="gpid"></param>
+            <param name="pid"></param>
+            <param name="cid"></param>
+            <param name="gcid"></param>
+            <param name="body"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.PostGrandparent(System.Int32,SettingsContracts.ApiTransaction.SettingsOnly)">
+            <summary>
+            Update existing Level 1 Setting.
+            </summary>
+            <param name="accountId"></param>
+            <param name="body"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.PostParent(System.Int32,System.Int64,SettingsContracts.ApiTransaction.SettingsOnly)">
+            <summary>
+            Update existing Level 2 Setting.
+            </summary>
+            <param name="accountId"></param>
+            <param name="gpid"></param>
+            <param name="body"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.PostChild(System.Int32,System.Int64,System.Int64,SettingsContracts.ApiTransaction.SettingsOnly)">
+            <summary>
+            Update existing Level 3 Setting.
+            </summary>
+            <param name="accountId"></param>
+            <param name="gpid"></param>
+            <param name="pid"></param>
+            <param name="body"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.PostGrandchild(System.Int32,System.Int64,System.Int64,System.Int64,SettingsContracts.ApiTransaction.SettingsOnly)">
+            <summary>
+            Update existing Level 4 Setting.
+            </summary>
+            <param name="accountId"></param>
+            <param name="gpid"></param>
+            <param name="pid"></param>
+            <param name="cid"></param>
+            <param name="body"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.DeleteGrandparent(System.Int32,System.Int64)">
+            <summary>
+            Delete a Level 1 Setting permanently.
+            </summary>
+            <param name="accountId"></param>
+            <param name="gpid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.DeleteParent(System.Int32,System.Int64,System.Int64)">
+            <summary>
+            Delete a Level 2 Setting permanently.
+            </summary>
+            <param name="accountId"></param>
+            <param name="gpid"></param>
+            <param name="pid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.DeleteChild(System.Int32,System.Int64,System.Int64,System.Int64)">
+            <summary>
+            Delete a Level 3 Setting permanently.
+            </summary>
+            <param name="accountId"></param>
+            <param name="gpid"></param>
+            <param name="pid"></param>
+            <param name="cid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SettingsProject.Controllers.SettingsController.DeleteGrandchild(System.Int32,System.Int64,System.Int64,System.Int64,System.Int64)">
+            <summary>
+            Delete a Level 4 Setting permanently.
+            </summary>
+            <param name="accountId"></param>
+            <param name="gpid"></param>
+            <param name="pid"></param>
+            <param name="cid"></param>
+            <param name="gcid"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

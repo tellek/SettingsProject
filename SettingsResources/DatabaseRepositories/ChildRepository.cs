@@ -31,13 +31,17 @@ namespace SettingsResources.DatabaseRepositories
             StringBuilder sql = new StringBuilder();
             sql.AppendLine("INSERT INTO dbo.child");
             // Remember to make the order of the properties match the values.
-            sql.AppendLine("(name,values,gpid,pid,aid) VALUES (");
+            sql.Append("(c_name,gpid,pid,aid");
+            if (settings.Values != null && settings.Values.Length > 0)
+                sql.Append(",c_values");
+            sql.AppendLine(") VALUES (");
 
-            sql.AppendLine($"'{settings.Name}',");
-            sql.AppendLine($"'{MutateString.ConvertToJsonbString(settings.Values)}',");
-            sql.AppendLine($"{pData.Gpid},");
-            sql.AppendLine($"{pData.Pid},");
-            sql.AppendLine($"{pData.AccountId}");
+            sql.AppendLine($"'{settings.Name}'");
+            sql.AppendLine($",{pData.Gpid}");
+            sql.AppendLine($",{pData.Pid}");
+            sql.AppendLine($",{pData.AccountId}");
+            if (settings.Values != null && settings.Values.Length > 0)
+                sql.AppendLine($",'{MutateString.ConvertToJsonbString(settings.Values)}'");
 
             // Return the created ID for reference.
             sql.AppendLine(") RETURNING cid;");
@@ -57,8 +61,8 @@ namespace SettingsResources.DatabaseRepositories
 
             StringBuilder p = new StringBuilder();
             // Set properties to be updated only if they contain a value.
-            if (!string.IsNullOrWhiteSpace(settings.Name)) p.Append($",name = '{settings.Name}'");
-            if (settings.Values != null) p.Append($",values = '{MutateString.ConvertToJsonbString(settings.Values)}'");
+            if (!string.IsNullOrWhiteSpace(settings.Name)) p.Append($",c_name = '{settings.Name}'");
+            if (settings.Values != null) p.Append($",c_values = '{MutateString.ConvertToJsonbString(settings.Values)}'");
 
             sql.AppendLine(p.ToString().TrimStart(','));
             // Skip the whole thing if no values were updated. 

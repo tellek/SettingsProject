@@ -2,7 +2,6 @@
 using SettingsContracts;
 using SettingsContracts.ApiTransaction;
 using SettingsContracts.DatabaseModels;
-using SettingsProject.Managers.Interfaces;
 using SettingsResources.DatabaseRepositories;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ using System.Threading.Tasks;
 namespace SettingsProject.Managers
 {
     //TODO: See about making this whole class a generic.
-    public class GrandparentManager : IGrandparentManager
+    public class GrandparentManager<T> : IManager<Grandparent>
     {
         private readonly IMemoryCache _cache;
         private readonly IRepository<Grandparent> _repo;
@@ -25,7 +24,7 @@ namespace SettingsProject.Managers
             _cacheTime = 10; //TODO: Get this from config.
         }
 
-        public async Task<(int, long)> CreateGrandparentAsync(ProcessData pData, SettingsOnly payload)
+        public async Task<(int, long)> CreateSettingAsync(ProcessData pData, SettingsOnly payload)
         {
             long createdRecordId = await _repo.CreateAsync(pData, payload);
 
@@ -38,7 +37,7 @@ namespace SettingsProject.Managers
             return (201, createdRecordId);
         }
 
-        public async Task<int> DeleteGrandparentAsync(ProcessData pData)
+        public async Task<int> DeleteSettingAsync(ProcessData pData)
         {
             int deletedAmount = await _repo.DeleteAsync(pData);
 
@@ -52,7 +51,7 @@ namespace SettingsProject.Managers
             return 200;
         }
 
-        public async Task<(int, Grandparent)> GetGrandparentAsync(ProcessData pData)
+        public async Task<(int, Grandparent)> GetSettingAsync(ProcessData pData)
         {
             Grandparent cachedValue;
             string accountkey = $"GrandparentList_{pData.AccountId}";
@@ -80,7 +79,7 @@ namespace SettingsProject.Managers
             return (200, cachedValue);
         }
 
-        public async Task<(int, IEnumerable<Grandparent>)> GetGrandparentsAsync(ProcessData pData)
+        public async Task<(int, IEnumerable<Grandparent>)> GetSettingsAsync(ProcessData pData)
         {
             string key = $"GrandparentList_{pData.AccountId}";
 
@@ -95,7 +94,7 @@ namespace SettingsProject.Managers
             return (200, cachedValue);
         }
 
-        public async Task<int> UpdateGrandparentAsync(ProcessData pData, SettingsOnly payload)
+        public async Task<int> UpdateSettingAsync(ProcessData pData, SettingsOnly payload)
         {
             long updatedRecordId = await _repo.UpdateAsync(pData, payload);
             if (updatedRecordId <= 0) return 404;

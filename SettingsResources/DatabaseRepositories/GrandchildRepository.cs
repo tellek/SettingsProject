@@ -31,14 +31,18 @@ namespace SettingsResources.DatabaseRepositories
             StringBuilder sql = new StringBuilder();
             sql.AppendLine("INSERT INTO dbo.grandchild");
             // Remember to make the order of the properties match the values.
-            sql.AppendLine("(name,values,gpid,pid,cid,aid) VALUES (");
+            sql.Append("(gc_name,gpid,pid,cid,aid");
+            if (settings.Values != null && settings.Values.Length > 0)
+                sql.Append(",gc_values");
+            sql.AppendLine(") VALUES (");
 
-            sql.AppendLine($"'{settings.Name}',");
-            sql.AppendLine($"'{MutateString.ConvertToJsonbString(settings.Values)}',");
-            sql.AppendLine($"{pData.Gpid},");
-            sql.AppendLine($"{pData.Pid},");
-            sql.AppendLine($"{pData.Cid},");
-            sql.AppendLine($"{pData.AccountId}");
+            sql.AppendLine($"'{settings.Name}'");
+            sql.AppendLine($",{pData.Gpid}");
+            sql.AppendLine($",{pData.Pid}");
+            sql.AppendLine($",{pData.Cid}");
+            sql.AppendLine($",{pData.AccountId}");
+            if (settings.Values != null && settings.Values.Length > 0)
+                sql.AppendLine($",'{MutateString.ConvertToJsonbString(settings.Values)}'");
 
             // Return the created ID for reference.
             sql.AppendLine(") RETURNING gcid;");
@@ -58,8 +62,8 @@ namespace SettingsResources.DatabaseRepositories
 
             StringBuilder p = new StringBuilder();
             // Set properties to be updated only if they contain a value.
-            if (!string.IsNullOrWhiteSpace(settings.Name)) p.Append($",name = '{settings.Name}'");
-            if (settings.Values != null) p.Append($",values = '{MutateString.ConvertToJsonbString(settings.Values)}'");
+            if (!string.IsNullOrWhiteSpace(settings.Name)) p.Append($",gc_name = '{settings.Name}'");
+            if (settings.Values != null) p.Append($",gc_values = '{MutateString.ConvertToJsonbString(settings.Values)}'");
 
             sql.AppendLine(p.ToString().TrimStart(','));
             // Skip the whole thing if no values were updated. 

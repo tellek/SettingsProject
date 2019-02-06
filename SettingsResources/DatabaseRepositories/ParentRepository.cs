@@ -31,12 +31,16 @@ namespace SettingsResources.DatabaseRepositories
             StringBuilder sql = new StringBuilder();
             sql.AppendLine("INSERT INTO dbo.parent");
             // Remember to make the order of the properties match the values.
-            sql.AppendLine("(name,values,gpid,aid) VALUES (");
+            sql.Append("(p_name,gpid,aid");
+            if (settings.Values != null && settings.Values.Length > 0)
+                sql.Append(",p_values");
+            sql.AppendLine(") VALUES (");
 
-            sql.AppendLine($"'{settings.Name}',");
-            sql.AppendLine($"'{MutateString.ConvertToJsonbString(settings.Values)}',");
-            sql.AppendLine($"{pData.Gpid},");
-            sql.AppendLine($"{pData.AccountId}");
+            sql.AppendLine($"'{settings.Name}'");
+            if (settings.Values != null && settings.Values.Length > 0)
+                sql.AppendLine($",'{MutateString.ConvertToJsonbString(settings.Values)}'");
+            sql.AppendLine($",{pData.Gpid}");
+            sql.AppendLine($",{pData.AccountId}");
 
             // Return the created ID for reference.
             sql.AppendLine(") RETURNING pid;");
@@ -56,8 +60,8 @@ namespace SettingsResources.DatabaseRepositories
 
             StringBuilder p = new StringBuilder();
             // Set properties to be updated only if they contain a value.
-            if (!string.IsNullOrWhiteSpace(settings.Name)) p.Append($",name = '{settings.Name}'");
-            if (settings.Values != null) p.Append($",values = '{MutateString.ConvertToJsonbString(settings.Values)}'");
+            if (!string.IsNullOrWhiteSpace(settings.Name)) p.Append($",p_name = '{settings.Name}'");
+            if (settings.Values != null) p.Append($",p_values = '{MutateString.ConvertToJsonbString(settings.Values)}'");
 
             sql.AppendLine(p.ToString().TrimStart(','));
             // Skip the whole thing if no values were updated. 
