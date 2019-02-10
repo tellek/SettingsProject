@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
 using SettingsContracts;
 using SettingsContracts.ApiTransaction;
 using SettingsContracts.DatabaseModels;
@@ -14,19 +15,19 @@ namespace SettingsProject.Managers
     public class GrandparentManager<T> : IManager<Grandparent>
     {
         private readonly IMemoryCache _cache;
-        private readonly IRepository<Grandparent> _repo;
+        private readonly IDbRepository<Grandparent> _db;
         private readonly int _cacheTime; // Minutes
 
-        public GrandparentManager(IMemoryCache memoryCache, IRepository<Grandparent> Repository)
+        public GrandparentManager(IMemoryCache memoryCache, IDbRepository<Grandparent> dbRepository)
         {
-            _repo = Repository;
+            _db = dbRepository;
             _cache = memoryCache;
             _cacheTime = 10; //TODO: Get this from config.
         }
 
         public async Task<(int, long)> CreateSettingAsync(ProcessData pData, SettingsOnly payload)
         {
-            long createdRecordId = await _repo.CreateAsync(pData, payload);
+            long createdRecordId = await _db.CreateAsync(pData, payload, Resource.Grandparent);
 
             // Assume this retuened zero because a data issue prevented it from being successful.
             if (createdRecordId <= 0) return (400, 0);
@@ -39,7 +40,7 @@ namespace SettingsProject.Managers
 
         public async Task<int> DeleteSettingAsync(ProcessData pData)
         {
-            int deletedAmount = await _repo.DeleteAsync(pData);
+            int deletedAmount = await _db.DeleteAsync(pData, Resource.Grandparent);
 
             // Assume this returned zero because no rows were affected.
             if (deletedAmount <= 0) return 404;
@@ -53,11 +54,10 @@ namespace SettingsProject.Managers
 
         public async Task<(int, Grandparent)> GetSettingAsync(ProcessData pData)
         {
-            Grandparent cachedValue;
             string accountkey = $"GrandparentList_{pData.AccountId}";
             string recordKey = $"Grandparent_{pData.Gpid}";
 
-            cachedValue = await _cache.GetOrCreateAsync<Grandparent>(recordKey, entry =>
+            var cachedValue = await _cache.GetOrCreateAsync<Grandparent>(recordKey, entry =>
             {
                 entry.AbsoluteExpiration = DateTimeOffset.UtcNow.AddMinutes(_cacheTime);
 
@@ -70,7 +70,7 @@ namespace SettingsProject.Managers
                 }
 
                 // May need to work on async since await may be needed here. Not sure how though.
-                else return _repo.GetSingleAsync(pData);
+                else return _db.GetSingleAsync(pData, Resource.Grandparent);
             });
 
             // Assume null means update failed due to bad data.
@@ -86,7 +86,7 @@ namespace SettingsProject.Managers
             IEnumerable<Grandparent> cachedValue = await _cache.GetOrCreateAsync(key, entry =>
             {
                 entry.AbsoluteExpiration = DateTimeOffset.UtcNow.AddMinutes(_cacheTime);
-                var result = _repo.GetManyAsync(pData);
+                var result = _db.GetManyAsync(pData, Resource.Grandparent);
                 return result;
             });
 
@@ -96,7 +96,7 @@ namespace SettingsProject.Managers
 
         public async Task<int> UpdateSettingAsync(ProcessData pData, SettingsOnly payload)
         {
-            long updatedRecordId = await _repo.UpdateAsync(pData, payload);
+            long updatedRecordId = await _db.UpdateAsync(pData, payload, Resource.Grandparent);
             if (updatedRecordId <= 0) return 404;
 
             // Remove cached items this change will affect.

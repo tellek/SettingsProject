@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace SettingsResources.DatabaseRepositories
 {
-    public class DbRepository : IDbRepository
+    public class DbRepository<T> : IDbRepository<T>
     {
         private readonly IConfiguration configuration;
         private readonly string connectionString;
@@ -36,19 +36,19 @@ namespace SettingsResources.DatabaseRepositories
                 switch (resource)
                 {
                     case Resource.Account:
-                        sql = $"SELECT dbo.account_insert({settings.Name});";
+                        sql = $"SELECT dbo.account_insert('{settings.Name}');";
                         break;
                     case Resource.Grandparent:
-                        sql = $"SELECT dbo.setting_gp_insert({pData.AccountId},{settings.Name},{value};";
+                        sql = $"SELECT dbo.setting_gp_insert({pData.AccountId},'{settings.Name}',{value ?? "null"});";
                         break;
                     case Resource.Parent:
-                        sql = $"SELECT dbo.setting_p_insert({pData.Gpid},{settings.Name},{value});";
+                        sql = $"SELECT dbo.setting_p_insert({pData.Gpid},'{settings.Name}',{value ?? "null"});";
                         break;
                     case Resource.Child:
-                        sql = $"SELECT dbo.setting_c_insert({pData.Pid},{settings.Name},{value});";
+                        sql = $"SELECT dbo.setting_c_insert({pData.Pid},'{settings.Name}',{value ?? "null"});";
                         break;
                     case Resource.Grandchild:
-                        sql = $"SELECT dbo.setting_gc_insert({pData.Cid},{settings.Name},{value});";
+                        sql = $"SELECT dbo.setting_gc_insert({pData.Cid},'{settings.Name}',{value ?? "null"});";
                         break;
                     case Resource.User:
                         throw new NotImplementedException();
@@ -68,19 +68,19 @@ namespace SettingsResources.DatabaseRepositories
                 switch (resource)
                 {
                     case Resource.Account:
-                        sql = $"SELECT dbo.account_update({pData.AccountId},{settings.Name});";
+                        sql = $"SELECT dbo.account_update({pData.AccountId},'{settings.Name}');";
                         break;
                     case Resource.Grandparent:
-                        sql = $"SELECT dbo.setting_gp_update({pData.Gpid},{settings.Name},{value};";
+                        sql = $"SELECT dbo.setting_gp_update({pData.Gpid},'{settings.Name ?? "null"}',{value ?? "null"});";
                         break;
                     case Resource.Parent:
-                        sql = $"SELECT dbo.setting_p_update({pData.Pid},{settings.Name},{value});";
+                        sql = $"SELECT dbo.setting_p_update({pData.Pid},'{settings.Name ?? "null"}',{value ?? "null"});";
                         break;
                     case Resource.Child:
-                        sql = $"SELECT dbo.setting_c_update({pData.Cid},{settings.Name},{value});";
+                        sql = $"SELECT dbo.setting_c_update({pData.Cid},'{settings.Name ?? "null"}',{value ?? "null"});";
                         break;
                     case Resource.Grandchild:
-                        sql = $"SELECT dbo.setting_gc_update({pData.Gcid},{settings.Name},{value});";
+                        sql = $"SELECT dbo.setting_gc_update({pData.Gcid},'{settings.Name ?? "null"}',{value ?? "null"});";
                         break;
                     case Resource.User:
                         throw new NotImplementedException();
@@ -121,7 +121,7 @@ namespace SettingsResources.DatabaseRepositories
             }
         }
 
-        public async Task<string> GetSingleAsync(ProcessData pData, Resource resource)
+        public async Task<T> GetSingleAsync(ProcessData pData, Resource resource)
         {
             using (DbConnection)
             {
@@ -130,31 +130,31 @@ namespace SettingsResources.DatabaseRepositories
                 switch (resource)
                 {
                     case Resource.Account:
-                        sql = $"SELECT dbo.account_select({pData.AccountId});";
+                        sql = $"SELECT * FROM dbo.account_select({pData.AccountId});";
                         break;
                     case Resource.Grandparent:
-                        sql = $"SELECT dbo.setting_gp_select({pData.Gpid});";
+                        sql = $"SELECT * FROM dbo.setting_gp_select({pData.Gpid});";
                         break;
                     case Resource.Parent:
-                        sql = $"SELECT dbo.setting_p_select({pData.Pid});";
+                        sql = $"SELECT * FROM dbo.setting_p_select({pData.Pid});";
                         break;
                     case Resource.Child:
-                        sql = $"SELECT dbo.setting_c_select({pData.Cid});";
+                        sql = $"SELECT * FROM dbo.setting_c_select({pData.Cid});";
                         break;
                     case Resource.Grandchild:
-                        sql = $"SELECT dbo.setting_gc_select({pData.Gcid});";
+                        sql = $"SELECT * FROM dbo.setting_gc_select({pData.Gcid});";
                         break;
                     case Resource.User:
-                        sql = $"SELECT dbo.users_select({pData.UserId});";
+                        sql = $"SELECT * FROM dbo.users_select({pData.UserId});";
                         break;
                 }
-                var result = await DbConnection.QueryAsync<string>(sql);
+                var result = await DbConnection.QueryAsync<T>(sql);
                 return result.FirstOrDefault();
             }
             
         }
 
-        public async Task<IEnumerable<string>> GetManyAsync(ProcessData pData, Resource resource)
+        public async Task<IEnumerable<T>> GetManyAsync(ProcessData pData, Resource resource)
         {
             using (DbConnection)
             {
@@ -165,22 +165,22 @@ namespace SettingsResources.DatabaseRepositories
                     case Resource.Account:
                         throw new NotImplementedException();
                     case Resource.Grandparent:
-                        sql = $"SELECT dbo.collection_gp_select({pData.AccountId});";
+                        sql = $"SELECT * FROM dbo.collection_gp_select({pData.AccountId});";
                         break;
                     case Resource.Parent:
-                        sql = $"SELECT dbo.collection_p_select({pData.Gpid});";
+                        sql = $"SELECT * FROM dbo.collection_p_select({pData.Gpid});";
                         break;
                     case Resource.Child:
-                        sql = $"SELECT dbo.collection_c_select({pData.Pid});";
+                        sql = $"SELECT * FROM dbo.collection_c_select({pData.Pid});";
                         break;
                     case Resource.Grandchild:
-                        sql = $"SELECT dbo.collection_gc_select({pData.Cid});";
+                        sql = $"SELECT * FROM dbo.collection_gc_select({pData.Cid});";
                         break;
                     case Resource.User:
-                        sql = $"SELECT dbo.collection_users_select({pData.AccountId});";
+                        sql = $"SELECT * FROM dbo.collection_users_select({pData.AccountId});";
                         break;
                 }
-                var result = await DbConnection.QueryAsync<string>(sql);
+                var result = await DbConnection.QueryAsync<T>(sql);
                 return result;
             }
         }

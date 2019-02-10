@@ -13,6 +13,8 @@ namespace SettingsUtilities
         /// <returns></returns>
         public static string ConvertToJsonbString(string[] stringArray)
         {
+            if (stringArray == null) return null;
+
             var sb = new StringBuilder();
             sb.Append("array[");
 
@@ -22,9 +24,10 @@ namespace SettingsUtilities
                 sb.Append($"'{stringArray[i]}'");
                 if (i != (count - 1)) sb.Append(",");
             }
-            sb.Append("]::json[]");
+            sb.Append("]::jsonb[]");
 
             return sb.ToString();
         }
+        // array['{}','{}']::jsonb[]
     }
 }
