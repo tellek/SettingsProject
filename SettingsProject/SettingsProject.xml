@@ -15,7 +15,7 @@
             </summary>
             <param name="context"></param>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.GetGrandparent(System.Int32,System.Int64)">
+        <member name="M:SettingsProject.Controllers.SettingsController.GetGrandparent(System.String,System.String)">
             <summary>
             Get a Level 1 Setting.
             </summary>
@@ -23,7 +23,7 @@
             <param name="gpid"></param>
             <returns></returns>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.GetParent(System.Int32,System.Int64,System.Int64)">
+        <member name="M:SettingsProject.Controllers.SettingsController.GetParent(System.String,System.String,System.String)">
             <summary>
             Get a Level 2 Setting.
             </summary>
@@ -32,7 +32,7 @@
             <param name="pid"></param>
             <returns></returns>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.GetChild(System.Int32,System.Int64,System.Int64,System.Int64)">
+        <member name="M:SettingsProject.Controllers.SettingsController.GetChild(System.String,System.String,System.String,System.String)">
             <summary>
             Get a Level 3 Setting.
             </summary>
@@ -42,7 +42,7 @@
             <param name="cid"></param>
             <returns></returns>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.GetGrandchild(System.Int32,System.Int64,System.Int64,System.Int64,System.Int64)">
+        <member name="M:SettingsProject.Controllers.SettingsController.GetGrandchild(System.String,System.String,System.String,System.String,System.String)">
             <summary>
             Get a Level 4 Setting.
             </summary>
@@ -53,14 +53,14 @@
             <param name="gcid"></param>
             <returns></returns>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.GetGrandparents(System.Int32)">
+        <member name="M:SettingsProject.Controllers.SettingsController.GetGrandparents(System.String)">
             <summary>
             Get a list of Level 1 Settings.
             </summary>
             <param name="accountId"></param>
             <returns></returns>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.GetParents(System.Int32,System.Int64)">
+        <member name="M:SettingsProject.Controllers.SettingsController.GetParents(System.String,System.String)">
             <summary>
             Get a list of Level 2 Settings.
             </summary>
@@ -68,7 +68,7 @@
             <param name="gpid"></param>
             <returns></returns>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.GetChildren(System.Int32,System.Int64,System.Int64)">
+        <member name="M:SettingsProject.Controllers.SettingsController.GetChildren(System.String,System.String,System.String)">
             <summary>
             Get a list of Level 3 Settings.
             </summary>
@@ -77,7 +77,7 @@
             <param name="pid"></param>
             <returns></returns>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.GetGrandchildren(System.Int32,System.Int64,System.Int64,System.Int64)">
+        <member name="M:SettingsProject.Controllers.SettingsController.GetGrandchildren(System.String,System.String,System.String,System.String)">
             <summary>
             Get a list of Level 4 Settings.
             </summary>
@@ -87,7 +87,7 @@
             <param name="cid"></param>
             <returns></returns>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.PatchGrandparent(System.Int32,System.Int64,SettingsContracts.ApiTransaction.SettingsOnly)">
+        <member name="M:SettingsProject.Controllers.SettingsController.PatchGrandparent(System.String,System.String,SettingsContracts.ApiTransaction.SettingsOnly)">
             <summary>
             Update a Level 1 Setting.
             </summary>
@@ -96,7 +96,7 @@
             <param name="body"></param>
             <returns></returns>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.PatchParent(System.Int32,System.Int64,System.Int64,SettingsContracts.ApiTransaction.SettingsOnly)">
+        <member name="M:SettingsProject.Controllers.SettingsController.PatchParent(System.String,System.String,System.String,SettingsContracts.ApiTransaction.SettingsOnly)">
             <summary>
             Update a Level 2 Setting.
             </summary>
@@ -106,7 +106,7 @@
             <param name="body"></param>
             <returns></returns>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.PatchChild(System.Int32,System.Int64,System.Int64,System.Int64,SettingsContracts.ApiTransaction.SettingsOnly)">
+        <member name="M:SettingsProject.Controllers.SettingsController.PatchChild(System.String,System.String,System.String,System.String,SettingsContracts.ApiTransaction.SettingsOnly)">
             <summary>
             Update a Level 3 Setting.
             </summary>
@@ -117,7 +117,7 @@
             <param name="body"></param>
             <returns></returns>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.PatchGrandchild(System.Int32,System.Int64,System.Int64,System.Int64,System.Int64,SettingsContracts.ApiTransaction.SettingsOnly)">
+        <member name="M:SettingsProject.Controllers.SettingsController.PatchGrandchild(System.String,System.String,System.String,System.String,System.String,SettingsContracts.ApiTransaction.SettingsOnly)">
             <summary>
             Update a Level 4 Setting.
             </summary>
@@ -129,7 +129,7 @@
             <param name="body"></param>
             <returns></returns>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.PostGrandparent(System.Int32,SettingsContracts.ApiTransaction.SettingsOnly)">
+        <member name="M:SettingsProject.Controllers.SettingsController.PostGrandparent(System.String,SettingsContracts.ApiTransaction.SettingsOnly)">
             <summary>
             Update existing Level 1 Setting.
             </summary>
@@ -137,7 +137,7 @@
             <param name="body"></param>
             <returns></returns>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.PostParent(System.Int32,System.Int64,SettingsContracts.ApiTransaction.SettingsOnly)">
+        <member name="M:SettingsProject.Controllers.SettingsController.PostParent(System.String,System.String,SettingsContracts.ApiTransaction.SettingsOnly)">
             <summary>
             Update existing Level 2 Setting.
             </summary>
@@ -146,7 +146,7 @@
             <param name="body"></param>
             <returns></returns>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.PostChild(System.Int32,System.Int64,System.Int64,SettingsContracts.ApiTransaction.SettingsOnly)">
+        <member name="M:SettingsProject.Controllers.SettingsController.PostChild(System.String,System.String,System.String,SettingsContracts.ApiTransaction.SettingsOnly)">
             <summary>
             Update existing Level 3 Setting.
             </summary>
@@ -156,7 +156,7 @@
             <param name="body"></param>
             <returns></returns>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.PostGrandchild(System.Int32,System.Int64,System.Int64,System.Int64,SettingsContracts.ApiTransaction.SettingsOnly)">
+        <member name="M:SettingsProject.Controllers.SettingsController.PostGrandchild(System.String,System.String,System.String,System.String,SettingsContracts.ApiTransaction.SettingsOnly)">
             <summary>
             Update existing Level 4 Setting.
             </summary>
@@ -167,7 +167,7 @@
             <param name="body"></param>
             <returns></returns>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.DeleteGrandparent(System.Int32,System.Int64)">
+        <member name="M:SettingsProject.Controllers.SettingsController.DeleteGrandparent(System.String,System.String)">
             <summary>
             Delete a Level 1 Setting permanently.
             </summary>
@@ -175,7 +175,7 @@
             <param name="gpid"></param>
             <returns></returns>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.DeleteParent(System.Int32,System.Int64,System.Int64)">
+        <member name="M:SettingsProject.Controllers.SettingsController.DeleteParent(System.String,System.String,System.String)">
             <summary>
             Delete a Level 2 Setting permanently.
             </summary>
@@ -184,7 +184,7 @@
             <param name="pid"></param>
             <returns></returns>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.DeleteChild(System.Int32,System.Int64,System.Int64,System.Int64)">
+        <member name="M:SettingsProject.Controllers.SettingsController.DeleteChild(System.String,System.String,System.String,System.String)">
             <summary>
             Delete a Level 3 Setting permanently.
             </summary>
@@ -194,7 +194,7 @@
             <param name="cid"></param>
             <returns></returns>
         </member>
-        <member name="M:SettingsProject.Controllers.SettingsController.DeleteGrandchild(System.Int32,System.Int64,System.Int64,System.Int64,System.Int64)">
+        <member name="M:SettingsProject.Controllers.SettingsController.DeleteGrandchild(System.String,System.String,System.String,System.String,System.String)">
             <summary>
             Delete a Level 4 Setting permanently.
             </summary>

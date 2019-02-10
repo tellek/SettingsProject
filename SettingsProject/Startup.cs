@@ -15,7 +15,6 @@ using Microsoft.Extensions.Options;
 using SettingsContracts;
 using SettingsContracts.DatabaseModels;
 using SettingsProject.Managers;
-using SettingsProject.Managers.Interfaces;
 using SettingsResources.DatabaseRepositories;
 using Swashbuckle.AspNetCore.Swagger;
 
