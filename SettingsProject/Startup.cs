@@ -12,8 +12,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Serilog;
 using SettingsContracts;
 using SettingsContracts.DatabaseModels;
+using SettingsProject.Extensions;
 using SettingsProject.Managers;
 using SettingsResources.DatabaseRepositories;
 using Swashbuckle.AspNetCore.Swagger;
@@ -52,7 +54,7 @@ namespace SettingsProject
                 //... and tell Swagger to use those XML comments.
                 c.IncludeXmlComments(xmlPath);
             });
-
+            
             // Dependency Injection
             services.AddSingleton(typeof(IDbRepository<Grandparent>), typeof(DbRepository<Grandparent>));
             services.AddSingleton(typeof(IDbRepository<Parent>), typeof(DbRepository<Parent>));
@@ -76,6 +78,8 @@ namespace SettingsProject
                 app.UseHsts();
             }
 
+            app.UseMiddleware<ExceptionMiddleware>();
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -84,6 +88,8 @@ namespace SettingsProject
             });
             app.UseHttpsRedirection();
             app.UseMvc();
+
+            Log.Information("API configured, running, and ready for use!");
         }
     }
 }

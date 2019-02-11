@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using Serilog;
 using SettingsContracts;
 using SettingsContracts.ApiTransaction;
 using SettingsContracts.DatabaseModels;
@@ -33,6 +34,7 @@ namespace SettingsProject.Managers
             // Remove cached items this change will affect.
             _cache.Remove($"ParentList_{pData.AccountId}");
 
+            Log.Debug($"Parent setting {createdRecordId} created for Grandparent {pData.Gpid}.");
             return (201, createdRecordId);
         }
 
@@ -47,6 +49,7 @@ namespace SettingsProject.Managers
             _cache.Remove($"ParentList_{pData.AccountId}");
             _cache.Remove($"Parent_{pData.Pid}");
 
+            Log.Debug($"Deleted Parent setting {pData.Pid} from Grandparent {pData.Gpid}.");
             return 200;
         }
 
@@ -75,6 +78,7 @@ namespace SettingsProject.Managers
             // Assume null means update failed due to bad data.
             if (cachedValue == null) return (404, null);
 
+            Log.Debug($"Retrieved Parent setting {pData.Pid} from Grandparent {pData.Gpid}.");
             return (200, cachedValue);
         }
 
@@ -89,6 +93,7 @@ namespace SettingsProject.Managers
                 return result;
             });
 
+            Log.Debug($"Retrieved Parent list from Grandparent {pData.Gpid}.");
             // No need to return 404 as an empty Ienumerable will give the '[]' that we want.
             return (200, cachedValue);
         }
@@ -102,6 +107,7 @@ namespace SettingsProject.Managers
             _cache.Remove($"ParentList_{pData.AccountId}");
             _cache.Remove($"Parent_{pData.Pid}");
 
+            Log.Debug($"Updated Parent setting {pData.Pid} in Grandparent {pData.Gpid}.");
             return 204;
         }
 

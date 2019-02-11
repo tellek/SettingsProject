@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using Serilog;
 using SettingsContracts;
 using SettingsContracts.ApiTransaction;
 using SettingsContracts.DatabaseModels;
@@ -33,6 +34,7 @@ namespace SettingsProject.Managers
             // Remove cached items this change will affect.
             _cache.Remove($"GrandchildList_{pData.AccountId}");
 
+            Log.Debug($"Grandchild setting {createdRecordId} created for Child {pData.Cid}.");
             return (201, createdRecordId);
         }
 
@@ -47,6 +49,7 @@ namespace SettingsProject.Managers
             _cache.Remove($"GrandchildList_{pData.AccountId}");
             _cache.Remove($"Grandchild_{pData.Gcid}");
 
+            Log.Debug($"Deleted Grandchild setting {pData.Gcid} from Child {pData.Cid}.");
             return 200;
         }
 
@@ -75,6 +78,7 @@ namespace SettingsProject.Managers
             // Assume null means update failed due to bad data.
             if (cachedValue == null) return (404, null);
 
+            Log.Debug($"Retrieved Grandchild setting {pData.Gcid} from Child {pData.Cid}.");
             return (200, cachedValue);
         }
 
@@ -89,6 +93,7 @@ namespace SettingsProject.Managers
                 return result;
             });
 
+            Log.Debug($"Retrieved Grandchild list from Child {pData.Cid}.");
             // No need to return 404 as an empty Ienumerable will give the '[]' that we want.
             return (200, cachedValue);
         }
@@ -102,6 +107,7 @@ namespace SettingsProject.Managers
             _cache.Remove($"GrandchildList_{pData.AccountId}");
             _cache.Remove($"Grandchild_{pData.Gcid}");
 
+            Log.Debug($"Updated Grandchild setting {pData.Gcid} in Child {pData.Cid}.");
             return 204;
         }
 

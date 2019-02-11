@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
+using Serilog;
 using SettingsContracts;
 using SettingsContracts.ApiTransaction;
 using SettingsContracts.DatabaseModels;
@@ -35,6 +36,7 @@ namespace SettingsProject.Managers
             // Remove cached items this change will affect.
             _cache.Remove($"GrandparentList_{pData.AccountId}");
 
+            Log.Debug($"Grandparent setting {createdRecordId} created for account {pData.AccountId}.");
             return (201, createdRecordId);
         }
 
@@ -49,6 +51,7 @@ namespace SettingsProject.Managers
             _cache.Remove($"GrandparentList_{pData.AccountId}");
             _cache.Remove($"Grandparent_{pData.Gpid}");
 
+            Log.Debug($"Deleted Grandparent setting {pData.Gpid} from account {pData.AccountId}.");
             return 200;
         }
 
@@ -76,6 +79,7 @@ namespace SettingsProject.Managers
             // Assume null means update failed due to bad data.
             if (cachedValue == null) return (404, null);
 
+            Log.Debug($"Retrieved Grandparent setting {pData.Gpid} from account {pData.AccountId}.");
             return (200, cachedValue);
         }
 
@@ -90,6 +94,7 @@ namespace SettingsProject.Managers
                 return result;
             });
 
+            Log.Debug($"Retrieved Grandparent list from account {pData.AccountId}.");
             // No need to return 404 as an empty Ienumerable will give the '[]' that we want.
             return (200, cachedValue);
         }
@@ -103,6 +108,7 @@ namespace SettingsProject.Managers
             _cache.Remove($"GrandparentList_{pData.AccountId}");
             _cache.Remove($"Grandparent_{pData.Gpid}");
 
+            Log.Debug($"Updated Grandparent setting {pData.Gpid} in account {pData.AccountId}.");
             return 204;
         }
     }
