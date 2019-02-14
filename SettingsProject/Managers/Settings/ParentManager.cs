@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SettingsProject.Managers
+namespace SettingsProject.Managers.Settings
 {
     public class ParentManager<T> : IManager<Parent>
     {

@@ -7,26 +7,10 @@ namespace SettingsContracts.DatabaseModels
 {
     public class Child
     {
-        private int aid { get; set; }
-        private long gpid { get; set; }
         private long pid { get; set; }
         private long cid { get; set; }
         private string c_name { get; set; }
         private string[] c_values { get; set; }
-
-        [Required]
-        public int AccountId
-        {
-            get { return aid; }
-            set { aid = value; }
-        }
-
-        [Required]
-        public long Gpid
-        {
-            get { return gpid; }
-            set { gpid = value; }
-        }
 
         [Required]
         public long Pid

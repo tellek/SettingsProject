@@ -4,6 +4,12 @@
         <name>SettingsProject</name>
     </assembly>
     <members>
+        <member name="M:SettingsProject.Attributes.RequireTokenAttribute.OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext)">
+            <summary>
+            Require the addition of a bearer token for the tagged endpoint.
+            </summary>
+            <param name="context"></param>
+        </member>
         <member name="T:SettingsProject.Attributes.ValidateModelStateAttribute">
             <summary>
             Model state validation attribute

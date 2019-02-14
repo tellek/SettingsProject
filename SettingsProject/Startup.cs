@@ -16,7 +16,9 @@ using Serilog;
 using SettingsContracts;
 using SettingsContracts.DatabaseModels;
 using SettingsProject.Extensions;
+using SettingsProject.Helpers;
 using SettingsProject.Managers;
+using SettingsProject.Managers.Settings;
 using SettingsResources.DatabaseRepositories;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -60,10 +62,12 @@ namespace SettingsProject
             services.AddSingleton(typeof(IDbRepository<Parent>), typeof(DbRepository<Parent>));
             services.AddSingleton(typeof(IDbRepository<Child>), typeof(DbRepository<Child>));
             services.AddSingleton(typeof(IDbRepository<Grandchild>), typeof(DbRepository<Grandchild>));
+            services.AddSingleton(typeof(IDbRepository<UserAuth>), typeof(DbRepository<UserAuth>));
             services.AddSingleton(typeof(IManager<Grandparent>), typeof(GrandparentManager<Grandparent>));
             services.AddSingleton(typeof(IManager<Parent>), typeof(ParentManager<Parent>));
             services.AddSingleton(typeof(IManager<Child>), typeof(ChildManager<Child>));
             services.AddSingleton(typeof(IManager<Grandchild>), typeof(GrandchildManager<Grandchild>));
+            services.AddSingleton<IAuthManager, AuthManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

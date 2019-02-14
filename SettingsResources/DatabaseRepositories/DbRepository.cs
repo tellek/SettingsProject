@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Npgsql;
 using SettingsContracts;
 using SettingsContracts.ApiTransaction;
+using SettingsContracts.DatabaseModels;
 using SettingsUtilities;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace SettingsResources.DatabaseRepositories
             connectionString = configuration["ConnectionStrings:PostgresDb"];
         }
 
-        public async Task<long> CreateAsync(ProcessData pData, SettingsOnly settings, Resource resource)
+        public async Task<long> CreateAsync(ProcessData pData, SettingsOnly settings, Resource resource, bool byName = false)
         {
             using (DbConnection)
             {
@@ -56,7 +57,7 @@ namespace SettingsResources.DatabaseRepositories
             }
         }
 
-        public async Task<int> UpdateAsync(ProcessData pData, SettingsOnly settings, Resource resource)
+        public async Task<int> UpdateAsync(ProcessData pData, SettingsOnly settings, Resource resource, bool byName = false)
         {
             using (DbConnection)
             {
@@ -88,7 +89,7 @@ namespace SettingsResources.DatabaseRepositories
             }
         }
 
-        public async Task<int> DeleteAsync(ProcessData pData, Resource resource)
+        public async Task<int> DeleteAsync(ProcessData pData, Resource resource, bool byName = false)
         {
             using (DbConnection)
             {
@@ -119,7 +120,7 @@ namespace SettingsResources.DatabaseRepositories
             }
         }
 
-        public async Task<T> GetSingleAsync(ProcessData pData, Resource resource)
+        public async Task<T> GetSingleAsync(ProcessData pData, Resource resource, bool byName = false)
         {
             using (DbConnection)
             {
@@ -143,7 +144,8 @@ namespace SettingsResources.DatabaseRepositories
                         sql = $"SELECT * FROM dbo.setting_gc_select({pData.Gcid});";
                         break;
                     case Resource.User:
-                        sql = $"SELECT * FROM dbo.users_select({pData.UserId});";
+                        if (byName) sql = $"SELECT * FROM dbo.users_select_byname('{pData.UserName}');";
+                        else sql = $"SELECT * FROM dbo.users_select({pData.UserId});";
                         break;
                 }
                 var result = await DbConnection.QueryAsync<T>(sql);
@@ -152,7 +154,7 @@ namespace SettingsResources.DatabaseRepositories
             
         }
 
-        public async Task<IEnumerable<T>> GetManyAsync(ProcessData pData, Resource resource)
+        public async Task<IEnumerable<T>> GetManyAsync(ProcessData pData, Resource resource, bool byName = false)
         {
             using (DbConnection)
             {
@@ -183,5 +185,44 @@ namespace SettingsResources.DatabaseRepositories
             }
         }
 
+        public async Task<Permissions> ChallengeCredentialsAsync(string username, string password)
+        {
+            using (DbConnection)
+            {
+                DbConnection.Open();
+                string sql = $"SELECT * FROM dbo.users_challenge_password('{username}', '{password}');";
+                var result = await DbConnection.QueryAsync<Permissions>(sql);
+                return result.FirstOrDefault();
+            }
+        }
+
+        public async Task<Hierarchy> GetRequestHierarchyAsync(ProcessData pData, Resource resource, bool byName = false)
+        {
+            using (DbConnection)
+            {
+                DbConnection.Open();
+                string sql = "";
+                switch (resource)
+                {
+                    case Resource.Grandparent:
+                        sql = $"SELECT dbo.hierarchy_gp_select({pData.Gpid});";
+                        break;
+                    case Resource.Parent:
+                        sql = $"SELECT dbo.hierarchy_p_select({pData.Pid});";
+                        break;
+                    case Resource.Child:
+                        sql = $"SELECT dbo.hierarchy_c_select({pData.Cid});";
+                        break;
+                    case Resource.Grandchild:
+                        sql = $"SELECT dbo.hierarchy_gc_select({pData.Gcid});";
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+                var result = await DbConnection.QueryAsync<Hierarchy>(sql);
+                return result.FirstOrDefault();
+            }
+        }
+        
     }
 }

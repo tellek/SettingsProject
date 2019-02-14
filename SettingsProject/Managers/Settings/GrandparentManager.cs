@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SettingsProject.Managers
+namespace SettingsProject.Managers.Settings
 {
     //TODO: See about making this whole class a generic.
     public class GrandparentManager<T> : IManager<Grandparent>

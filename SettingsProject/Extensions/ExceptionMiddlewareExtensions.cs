@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Serilog;
-using SettingsContracts.Models;
+using SettingsContracts.ApiTransaction.ResponseModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,10 +38,7 @@ namespace SettingsProject.Extensions
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            return context.Response.WriteAsync(new ErrorDetails()
-            {
-                Error = exception.Message
-            }.ToString());
+            return context.Response.WriteAsync(new {Error = exception.Message}.ToString());
         }
     }
 }
