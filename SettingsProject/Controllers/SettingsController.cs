@@ -8,7 +8,7 @@ using SettingsContracts.ApiTransaction;
 using SettingsContracts.DatabaseModels;
 using SettingsProject.Attributes;
 using SettingsProject.Helpers;
-using SettingsProject.Managers.Settings;
+using SettingsProject.Managers;
 
 namespace SettingsProject.Controllers
 {
@@ -17,13 +17,13 @@ namespace SettingsProject.Controllers
     [ApiController]
     public class SettingsController : ControllerBase
     {
-        private readonly IManager<Grandparent> gpManager;
-        private readonly IManager<Parent> pManager;
-        private readonly IManager<Child> cManager;
-        private readonly IManager<Grandchild> gcManager;
+        private readonly ISettingsManager<Grandparent> gpManager;
+        private readonly ISettingsManager<Parent> pManager;
+        private readonly ISettingsManager<Child> cManager;
+        private readonly ISettingsManager<Grandchild> gcManager;
 
-        public SettingsController(IManager<Grandparent> gpManager, IManager<Parent> pManager,
-            IManager<Child> cManager, IManager<Grandchild> gcManager)
+        public SettingsController(ISettingsManager<Grandparent> gpManager, ISettingsManager<Parent> pManager,
+            ISettingsManager<Child> cManager, ISettingsManager<Grandchild> gcManager)
         {
             this.gpManager = gpManager;
             this.pManager = pManager;
@@ -48,7 +48,7 @@ namespace SettingsProject.Controllers
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"], 
                 accountId, gpid, null, null, null);
 
-            var result = await gpManager.GetSettingAsync(pData);
+            var result = await gpManager.GetSettingAsync(pData, Resource.Grandparent);
             return StatusCode(result.Item1, result.Item2);
         }
 
@@ -69,7 +69,7 @@ namespace SettingsProject.Controllers
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"], 
                 accountId, gpid, pid, null, null);
 
-            var result = await pManager.GetSettingAsync(pData);
+            var result = await pManager.GetSettingAsync(pData, Resource.Parent);
             return StatusCode(result.Item1, result.Item2);
         }
 
@@ -91,7 +91,7 @@ namespace SettingsProject.Controllers
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"], 
                 accountId, gpid, pid, cid, null);
 
-            var result = await cManager.GetSettingAsync(pData);
+            var result = await cManager.GetSettingAsync(pData, Resource.Child);
             return StatusCode(result.Item1, result.Item2);
         }
 
@@ -114,7 +114,7 @@ namespace SettingsProject.Controllers
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"], 
                 accountId, gpid, pid, cid, gcid);
 
-            var result = await gcManager.GetSettingAsync(pData);
+            var result = await gcManager.GetSettingAsync(pData, Resource.Grandchild);
             return StatusCode(result.Item1, result.Item2);
         }
         #endregion
@@ -135,7 +135,7 @@ namespace SettingsProject.Controllers
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"], 
                 accountId, null, null, null, null);
 
-            var result = await gpManager.GetSettingsAsync(pData);
+            var result = await gpManager.GetSettingsAsync(pData, Resource.Grandparent);
             return StatusCode(result.Item1, result.Item2);
         }
 
@@ -155,7 +155,7 @@ namespace SettingsProject.Controllers
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"], 
                 accountId, gpid, null, null, null);
 
-            var result = await pManager.GetSettingsAsync(pData);
+            var result = await pManager.GetSettingsAsync(pData, Resource.Parent);
             return StatusCode(result.Item1, result.Item2);
         }
 
@@ -175,7 +175,7 @@ namespace SettingsProject.Controllers
         {
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"], 
                 accountId, gpid, pid, null, null);
-            var result = await cManager.GetSettingsAsync(pData);
+            var result = await cManager.GetSettingsAsync(pData, Resource.Child);
             return StatusCode(result.Item1, result.Item2);
         }
 
@@ -196,7 +196,7 @@ namespace SettingsProject.Controllers
         {
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"], 
                 accountId, gpid, pid, cid, null);
-            var result = await gcManager.GetSettingsAsync(pData);
+            var result = await gcManager.GetSettingsAsync(pData, Resource.Grandchild);
             return StatusCode(result.Item1, result.Item2);
         }
         #endregion
@@ -219,7 +219,7 @@ namespace SettingsProject.Controllers
         {
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"],
                 accountId, gpid, null, null, null);
-            var result = await gpManager.UpdateSettingAsync(pData, body);
+            var result = await gpManager.UpdateSettingAsync(pData, body, Resource.Grandparent);
             return StatusCode(result);
         }
 
@@ -240,7 +240,7 @@ namespace SettingsProject.Controllers
         {
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"],
                 accountId, gpid, pid, null, null);
-            var result = await pManager.UpdateSettingAsync(pData, body);
+            var result = await pManager.UpdateSettingAsync(pData, body, Resource.Parent);
             return StatusCode(result);
         }
 
@@ -262,7 +262,7 @@ namespace SettingsProject.Controllers
         {
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"],
                 accountId, gpid, pid, cid, null);
-            var result = await cManager.UpdateSettingAsync(pData, body);
+            var result = await cManager.UpdateSettingAsync(pData, body, Resource.Child);
             return StatusCode(result);
         }
 
@@ -286,7 +286,7 @@ namespace SettingsProject.Controllers
         {
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"],
                 accountId, gpid, pid, cid, gcid);
-            var result = await gcManager.UpdateSettingAsync(pData, body);
+            var result = await gcManager.UpdateSettingAsync(pData, body, Resource.Grandchild);
             return StatusCode(result);
         }
         #endregion
@@ -308,7 +308,7 @@ namespace SettingsProject.Controllers
         {
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"],
                 accountId, null, null, null, null);
-            var result = await gpManager.CreateSettingAsync(pData, body);
+            var result = await gpManager.CreateSettingAsync(pData, body, Resource.Grandparent);
             return StatusCode(result.Item1, $"Created: {result.Item2}");
         }
 
@@ -328,7 +328,7 @@ namespace SettingsProject.Controllers
         {
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"],
                 accountId, gpid, null, null, null);
-            var result = await pManager.CreateSettingAsync(pData, body);
+            var result = await pManager.CreateSettingAsync(pData, body, Resource.Parent);
             return StatusCode(result.Item1, $"Created: {result.Item2}");
         }
 
@@ -349,7 +349,7 @@ namespace SettingsProject.Controllers
         {
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"],
                 accountId, gpid, pid, null, null);
-            var result = await cManager.CreateSettingAsync(pData, body);
+            var result = await cManager.CreateSettingAsync(pData, body, Resource.Child);
             return StatusCode(result.Item1, $"Created: {result.Item2}");
         }
 
@@ -371,7 +371,7 @@ namespace SettingsProject.Controllers
         {
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"],
                 accountId, gpid, pid, cid, null);
-            var result = await gcManager.CreateSettingAsync(pData, body);
+            var result = await gcManager.CreateSettingAsync(pData, body, Resource.Grandchild);
             return StatusCode(result.Item1, $"Created: {result.Item2}");
         }
         #endregion
@@ -392,7 +392,7 @@ namespace SettingsProject.Controllers
         {
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"],
                 accountId, gpid, null, null, null);
-            var result = await gpManager.DeleteSettingAsync(pData);
+            var result = await gpManager.DeleteSettingAsync(pData, Resource.Grandparent);
             return StatusCode(result);
         }
 
@@ -412,7 +412,7 @@ namespace SettingsProject.Controllers
         {
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"],
                 accountId, gpid, pid, null, null);
-            var result = await pManager.DeleteSettingAsync(pData);
+            var result = await pManager.DeleteSettingAsync(pData, Resource.Parent);
             return StatusCode(result);
         }
 
@@ -433,7 +433,7 @@ namespace SettingsProject.Controllers
         {
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"],
                 accountId, gpid, pid, cid, null);
-            var result = await cManager.DeleteSettingAsync(pData);
+            var result = await cManager.DeleteSettingAsync(pData, Resource.Child);
             return StatusCode(result);
         }
 
@@ -455,7 +455,7 @@ namespace SettingsProject.Controllers
         {
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"],
                 accountId, gpid, pid, cid, gcid);
-            var result = await gcManager.DeleteSettingAsync(pData);
+            var result = await gcManager.DeleteSettingAsync(pData, Resource.Grandchild);
             return StatusCode(result);
         }
         #endregion
