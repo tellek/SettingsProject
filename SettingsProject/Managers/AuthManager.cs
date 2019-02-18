@@ -46,6 +46,35 @@ namespace SettingsProject.Managers
             });
         }
 
+        public void VerifyAuthority(ProcessData pData)
+        {
+            // Get hierarchy
+            var hierarchy = _db.GetRequestHierarchyAsync(pData);
+
+            //TODO Fill out pData
+            FillInProcessData(pData);
+
+            //TODO Compare access levels to hierarchy
+            if (IsAllowedToAccessRequestedResource())
+            {
+                //TODO Allow process continuation
+            }
+            else
+            {
+                //TODO Return 401 if access is short
+            }
+        }
+
+        private void FillInProcessData(ProcessData pData)
+        {
+
+        }
+
+        private bool IsAllowedToAccessRequestedResource()
+        {
+            return true;
+        }
+
         private void SetMemoryCacheEntry(string token, Permissions access)
         {
             if (_cache.TryGetValue(token, out Permissions cachedItem))

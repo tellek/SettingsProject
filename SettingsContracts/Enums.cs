@@ -6,6 +6,7 @@ namespace SettingsContracts
 {
     public enum Resource
     {
+        None,
         Account,
         Grandparent,
         Parent,

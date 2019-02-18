@@ -4,7 +4,8 @@ using System.Text;
 
 namespace SettingsContracts.ApiTransaction.ResponseModels
 {
-    public class Gp_Response
+    public class FailureResponse
     {
+        public string Error { get; set; }
     }
 }

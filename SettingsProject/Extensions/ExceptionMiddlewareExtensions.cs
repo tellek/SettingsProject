@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using Serilog;
 using SettingsContracts.ApiTransaction.ResponseModels;
+using SettingsContracts.CustomExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +28,11 @@ namespace SettingsProject.Extensions
             {
                 await _next(httpContext);
             }
+            catch (InvalidResourceTypeException ivrte)
+            {
+                Log.Error($"InvalidResourceTypeException Caught: {ivrte}");
+                await HandleExceptionAsync(httpContext, ivrte);
+            }
             catch (Exception ex)
             {
                 Log.Error($"Exception Caught: {ex}");
@@ -38,7 +45,9 @@ namespace SettingsProject.Extensions
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            return context.Response.WriteAsync(new {Error = exception.Message}.ToString());
+            var response = new FailureResponse { Error = exception.Message };
+
+            return context.Response.WriteAsync(JsonConvert.SerializeObject(response, Formatting.Indented));
         }
     }
 }

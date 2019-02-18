@@ -21,6 +21,7 @@ namespace SettingsContracts
         public string Cname { get; set; }
         public string Gcname { get; set; }
 
+        public Resource Resource { get; set; }
         public Permissions Access { get; set; }
     }
 }

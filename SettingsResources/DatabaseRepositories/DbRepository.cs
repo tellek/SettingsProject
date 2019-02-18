@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Npgsql;
 using SettingsContracts;
 using SettingsContracts.ApiTransaction;
+using SettingsContracts.CustomExceptions;
 using SettingsContracts.DatabaseModels;
 using SettingsUtilities;
 using System;
@@ -25,14 +26,14 @@ namespace SettingsResources.DatabaseRepositories
             connectionString = configuration["ConnectionStrings:PostgresDb"];
         }
 
-        public async Task<long> CreateAsync(ProcessData pData, SettingsOnly settings, Resource resource, bool byName = false)
+        public async Task<long> CreateAsync(ProcessData pData, SettingsOnly settings, bool byName = false)
         {
             using (DbConnection)
             {
                 DbConnection.Open();
                 string sql = "";
                 string value = MutateString.ConvertToJsonbString(settings.Values);
-                switch (resource)
+                switch (pData.Resource)
                 {
                     case Resource.Account:
                         sql = $"SELECT dbo.account_insert('{settings.Name}');";
@@ -49,22 +50,22 @@ namespace SettingsResources.DatabaseRepositories
                     case Resource.Grandchild:
                         sql = $"SELECT dbo.setting_gc_insert({pData.Cid},'{settings.Name}',{value ?? "null"});";
                         break;
-                    case Resource.User:
-                        throw new NotImplementedException();
+                    default:
+                        throw new InvalidResourceTypeException();
                 }
                 var result = await DbConnection.QueryAsync<long>(sql);
                 return result.FirstOrDefault();
             }
         }
 
-        public async Task<int> UpdateAsync(ProcessData pData, SettingsOnly settings, Resource resource, bool byName = false)
+        public async Task<int> UpdateAsync(ProcessData pData, SettingsOnly settings, bool byName = false)
         {
             using (DbConnection)
             {
                 DbConnection.Open();
                 string sql = "";
                 string value = MutateString.ConvertToJsonbString(settings.Values);
-                switch (resource)
+                switch (pData.Resource)
                 {
                     case Resource.Account:
                         sql = $"SELECT dbo.account_update({pData.AccountId},'{settings.Name}');";
@@ -81,21 +82,21 @@ namespace SettingsResources.DatabaseRepositories
                     case Resource.Grandchild:
                         sql = $"SELECT dbo.setting_gc_update({pData.Gcid},'{settings.Name ?? "null"}',{value ?? "null"});";
                         break;
-                    case Resource.User:
-                        throw new NotImplementedException();
+                    default:
+                        throw new InvalidResourceTypeException();
                 }
                 var result = await DbConnection.QueryAsync<int>(sql);
                 return result.FirstOrDefault();
             }
         }
 
-        public async Task<int> DeleteAsync(ProcessData pData, Resource resource, bool byName = false)
+        public async Task<int> DeleteAsync(ProcessData pData, bool byName = false)
         {
             using (DbConnection)
             {
                 DbConnection.Open();
                 string sql = "";
-                switch (resource)
+                switch (pData.Resource)
                 {
                     case Resource.Account:
                         sql = $"SELECT dbo.account_delete({pData.AccountId});";
@@ -112,21 +113,21 @@ namespace SettingsResources.DatabaseRepositories
                     case Resource.Grandchild:
                         sql = $"SELECT dbo.setting_gc_delete({pData.Gcid});";
                         break;
-                    case Resource.User:
-                        throw new NotImplementedException();
+                    default:
+                        throw new InvalidResourceTypeException();
                 }
                 var result = await DbConnection.QueryAsync<int>(sql);
                 return result.FirstOrDefault();
             }
         }
 
-        public async Task<T> GetSingleAsync(ProcessData pData, Resource resource, bool byName = false)
+        public async Task<T> GetSingleAsync(ProcessData pData, bool byName = false)
         {
             using (DbConnection)
             {
                 DbConnection.Open();
                 string sql = "";
-                switch (resource)
+                switch (pData.Resource)
                 {
                     case Resource.Account:
                         sql = $"SELECT * FROM dbo.account_select({pData.AccountId});";
@@ -147,6 +148,8 @@ namespace SettingsResources.DatabaseRepositories
                         if (byName) sql = $"SELECT * FROM dbo.users_select_byname('{pData.UserName}');";
                         else sql = $"SELECT * FROM dbo.users_select({pData.UserId});";
                         break;
+                    default:
+                        throw new InvalidResourceTypeException();
                 }
                 var result = await DbConnection.QueryAsync<T>(sql);
                 return result.FirstOrDefault();
@@ -154,16 +157,14 @@ namespace SettingsResources.DatabaseRepositories
             
         }
 
-        public async Task<IEnumerable<T>> GetManyAsync(ProcessData pData, Resource resource, bool byName = false)
+        public async Task<IEnumerable<T>> GetManyAsync(ProcessData pData, bool byName = false)
         {
             using (DbConnection)
             {
                 DbConnection.Open();
                 string sql = "";
-                switch (resource)
+                switch (pData.Resource)
                 {
-                    case Resource.Account:
-                        throw new NotImplementedException();
                     case Resource.Grandparent:
                         sql = $"SELECT * FROM dbo.collection_gp_select({pData.AccountId});";
                         break;
@@ -179,6 +180,8 @@ namespace SettingsResources.DatabaseRepositories
                     case Resource.User:
                         sql = $"SELECT * FROM dbo.collection_users_select({pData.AccountId});";
                         break;
+                    default:
+                        throw new InvalidResourceTypeException();
                 }
                 var result = await DbConnection.QueryAsync<T>(sql);
                 return result;
@@ -196,13 +199,13 @@ namespace SettingsResources.DatabaseRepositories
             }
         }
 
-        public async Task<Hierarchy> GetRequestHierarchyAsync(ProcessData pData, Resource resource, bool byName = false)
+        public async Task<Hierarchy> GetRequestHierarchyAsync(ProcessData pData, bool byName = false)
         {
             using (DbConnection)
             {
                 DbConnection.Open();
                 string sql = "";
-                switch (resource)
+                switch (pData.Resource)
                 {
                     case Resource.Grandparent:
                         sql = $"SELECT dbo.hierarchy_gp_select({pData.Gpid});";
@@ -217,7 +220,7 @@ namespace SettingsResources.DatabaseRepositories
                         sql = $"SELECT dbo.hierarchy_gc_select({pData.Gcid});";
                         break;
                     default:
-                        throw new NotImplementedException();
+                        throw new InvalidResourceTypeException();
                 }
                 var result = await DbConnection.QueryAsync<Hierarchy>(sql);
                 return result.FirstOrDefault();

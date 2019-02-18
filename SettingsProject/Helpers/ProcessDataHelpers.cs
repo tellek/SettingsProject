@@ -9,7 +9,7 @@ namespace SettingsProject.Helpers
 {
     public static class ProcessDataHelpers
     {
-        public static ProcessData InitiateProcessData(Permissions access, string aid, string gpid, string pid, string cid, string gcid)
+        public static ProcessData InitiateProcessData(Permissions access, Resource resource, string aid, string gpid, string pid, string cid, string gcid)
         {
             var n_aid = TryToParseToInt(aid);
             var n_gpid = TryToParseToLong(gpid);
@@ -31,6 +31,7 @@ namespace SettingsProject.Helpers
             pd.Cname = (n_cid.isNotNull && n_cid.isString) ? n_cid.value : null;
             pd.Gcname = (n_gcid.isNotNull && n_gcid.isString) ? n_gcid.value : null;
 
+            pd.Resource = resource;
             pd.Access = access;
 
             return pd;
