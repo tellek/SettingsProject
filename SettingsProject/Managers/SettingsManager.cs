@@ -27,18 +27,18 @@ namespace SettingsProject.Managers
             _cacheTime = 10; //TODO: Get this from config.
         }
 
-        public async Task<(int, long)> CreateSettingAsync(ProcessData pData, SettingsOnly payload)
+        public async Task<(int, object)> CreateSettingAsync(ProcessData pData, SettingsOnly payload)
         {
             long createdRecordId = await _db.CreateAsync(pData, payload);
 
             // Assume this retuened zero because a data issue prevented it from being successful.
-            if (createdRecordId <= 0) return (400, 0);
+            if (createdRecordId <= 0) return (400, new FailureResponse("na", "Failed to create resource!"));
 
             // Remove cached items this change will affect.
             _cache.Remove($"{pData.Resource.ToString()}List_{pData.AccountId}");
 
             Log.Debug($"{pData.Resource.ToString()} setting {createdRecordId} created for account {pData.AccountId}.");
-            return (201, createdRecordId);
+            return (201, new CreatedResponse(createdRecordId, ""));
         }
 
         public async Task<int> DeleteSettingAsync(ProcessData pData)
@@ -53,7 +53,7 @@ namespace SettingsProject.Managers
             _cache.Remove($"{pData.Resource.ToString()}_{pData.Gpid}");
 
             Log.Debug($"Deleted {pData.Resource.ToString()} setting {pData.Gpid} from account {pData.AccountId}.");
-            return 200;
+            return 204;
         }
 
         public async Task<(int, object)> GetSettingAsync(ProcessData pData)

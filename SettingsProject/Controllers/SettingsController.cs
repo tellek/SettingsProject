@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using SettingsContracts;
 using SettingsContracts.ApiTransaction;
 using SettingsContracts.DatabaseModels;
@@ -46,7 +47,7 @@ namespace SettingsProject.Controllers
         public async virtual Task<ActionResult<Grandparent>> GetGrandparent([FromRoute][Required]string accountId, [FromRoute][Required]string gpid)
         {
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"], 
-                Resource.Grandparent, accountId, gpid, null, null, null);
+                Resource.None, accountId, gpid, null, null, null);
 
             var result = await gpManager.GetSettingAsync(pData);
             return StatusCode(result.Item1, result.Item2);
@@ -316,7 +317,7 @@ namespace SettingsProject.Controllers
                 Resource.Grandparent, accountId, null, null, null, null);
 
             var result = await gpManager.CreateSettingAsync(pData, body);
-            return StatusCode(result.Item1, $"Created: {result.Item2}");
+            return StatusCode(result.Item1, result.Item2);
         }
 
         /// <summary>
@@ -337,7 +338,7 @@ namespace SettingsProject.Controllers
                 Resource.Parent, accountId, gpid, null, null, null);
 
             var result = await pManager.CreateSettingAsync(pData, body);
-            return StatusCode(result.Item1, $"Created: {result.Item2}");
+            return StatusCode(result.Item1, result.Item2);
         }
 
         /// <summary>
@@ -359,7 +360,7 @@ namespace SettingsProject.Controllers
                 Resource.Child, accountId, gpid, pid, null, null);
 
             var result = await cManager.CreateSettingAsync(pData, body);
-            return StatusCode(result.Item1, $"Created: {result.Item2}");
+            return StatusCode(result.Item1, result.Item2);
         }
 
         /// <summary>
@@ -382,7 +383,7 @@ namespace SettingsProject.Controllers
                 Resource.Grandchild, accountId, gpid, pid, cid, null);
 
             var result = await gcManager.CreateSettingAsync(pData, body);
-            return StatusCode(result.Item1, $"Created: {result.Item2}");
+            return StatusCode(result.Item1, result.Item2);
         }
         #endregion
 

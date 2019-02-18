@@ -31,23 +31,23 @@ namespace SettingsProject.Extensions
             catch (InvalidResourceTypeException ivrte)
             {
                 Log.Error($"InvalidResourceTypeException Caught: {ivrte}");
-                await HandleExceptionAsync(httpContext, ivrte);
+                await HandleExceptionAsync(httpContext, ivrte, "InvalidResourceTypeException");
             }
             catch (Exception ex)
             {
                 Log.Error($"Exception Caught: {ex}");
-                await HandleExceptionAsync(httpContext, ex);
+                await HandleExceptionAsync(httpContext, ex, "Exception");
             }
         }
 
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private static Task HandleExceptionAsync(HttpContext context, Exception exception, string type)
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            var response = new FailureResponse { Error = exception.Message };
+            var response = new FailureResponse(type, exception.Message);
 
-            return context.Response.WriteAsync(JsonConvert.SerializeObject(response, Formatting.Indented));
+            return context.Response.WriteAsync(response.Json);
         }
     }
 }
