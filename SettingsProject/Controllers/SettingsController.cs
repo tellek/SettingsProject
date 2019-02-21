@@ -47,7 +47,7 @@ namespace SettingsProject.Controllers
         public async virtual Task<ActionResult<Grandparent>> GetGrandparent([FromRoute][Required]string accountId, [FromRoute][Required]string gpid)
         {
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"], 
-                Resource.None, accountId, gpid, null, null, null);
+                Resource.Grandparent, accountId, gpid, null, null, null);
 
             var result = await gpManager.GetSettingAsync(pData);
             return StatusCode(result.Item1, result.Item2);
