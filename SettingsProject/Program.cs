@@ -30,6 +30,10 @@ namespace SettingsProject
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseUrls("http://localhost:44881", "https://localhost:44882", "http://*:44883")
+                .UseKestrel()
+                .UseIISIntegration()
                 .UseSerilog()
                 .UseStartup<Startup>();
     }

@@ -29,4 +29,10 @@
     <ProjectReference Include="..\SettingsResources\SettingsResources.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="SettingsProject.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

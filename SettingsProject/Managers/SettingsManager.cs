@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Serilog;
 using SettingsContracts;
 using SettingsContracts.ApiTransaction;
 using SettingsContracts.ApiTransaction.ResponseModels;
 using SettingsResources.DatabaseRepositories;
+using SettingsUtilities;
 
 namespace SettingsProject.Managers
 {
@@ -27,7 +30,7 @@ namespace SettingsProject.Managers
             _cacheTime = 10; //TODO: Get this from config.
         }
 
-        public async Task<(int, object)> CreateSettingAsync(ProcessData pData, SettingsOnly payload)
+        public async Task<(int, object)> CreateSettingAsync(ProcessData pData, SettingsOnly payload, ControllerBase controller, HttpContext context)
         {
             long createdRecordId = await _db.CreateAsync(pData, payload);
 
@@ -37,8 +40,11 @@ namespace SettingsProject.Managers
             // Remove cached items this change will affect.
             _cache.Remove($"{pData.Resource.ToString()}List_{pData.AccountId}");
 
+            var url = controller.Url.Action($"Get{pData.Resource.ToString()}", "Settings",
+                Hrefs.BuildParameters(pData, createdRecordId), context.Request.Scheme, context.Request.Host.Value);
+
             Log.Debug($"{pData.Resource.ToString()} setting {createdRecordId} created for account {pData.AccountId}.");
-            return (201, new CreatedResponse(createdRecordId, ""));
+            return (201, new CreatedResponse(createdRecordId, url));
         }
 
         public async Task<int> DeleteSettingAsync(ProcessData pData)

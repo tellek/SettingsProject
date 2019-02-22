@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SettingsContracts;
 using SettingsContracts.ApiTransaction;
+using SettingsContracts.ApiTransaction.ResponseModels;
 using SettingsContracts.DatabaseModels;
 using SettingsProject.Attributes;
 using SettingsProject.Helpers;
@@ -316,7 +317,7 @@ namespace SettingsProject.Controllers
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"],
                 Resource.Grandparent, accountId, null, null, null, null);
 
-            var result = await gpManager.CreateSettingAsync(pData, body);
+            var result = await gpManager.CreateSettingAsync(pData, body, this, HttpContext);
             return StatusCode(result.Item1, result.Item2);
         }
 
@@ -337,7 +338,7 @@ namespace SettingsProject.Controllers
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"],
                 Resource.Parent, accountId, gpid, null, null, null);
 
-            var result = await pManager.CreateSettingAsync(pData, body);
+            var result = await pManager.CreateSettingAsync(pData, body, this, HttpContext);
             return StatusCode(result.Item1, result.Item2);
         }
 
@@ -359,7 +360,7 @@ namespace SettingsProject.Controllers
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"],
                 Resource.Child, accountId, gpid, pid, null, null);
 
-            var result = await cManager.CreateSettingAsync(pData, body);
+            var result = await cManager.CreateSettingAsync(pData, body, this, HttpContext);
             return StatusCode(result.Item1, result.Item2);
         }
 
@@ -382,7 +383,7 @@ namespace SettingsProject.Controllers
             var pData = ProcessDataHelpers.InitiateProcessData((Permissions)RouteData.Values["access"],
                 Resource.Grandchild, accountId, gpid, pid, cid, null);
 
-            var result = await gcManager.CreateSettingAsync(pData, body);
+            var result = await gcManager.CreateSettingAsync(pData, body, this, HttpContext);
             return StatusCode(result.Item1, result.Item2);
         }
         #endregion
